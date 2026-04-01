@@ -1,0 +1,247 @@
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+  }
+ 
+/* BANNER */  
+.banner {
+    position: relative;
+    width: 100%;
+    height: 80vh; /* O una altura fija si preferís */
+    overflow: hidden;
+}
+  
+.banner img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    object-position: center;
+}
+  
+.banner-text {
+    position: absolute;
+    top: 50%;
+    left: 10%;
+    transform: translateY(-50%);
+    color: white;
+    text-shadow: 1px 1px 5px rgba(0,0,0,0.7);
+    max-width: 600px;
+}
+  
+.banner-text h1 {
+    font-size: 3rem;
+    margin-bottom: 0.5rem;
+}
+  
+.banner-text p {
+    font-size: 1.2rem;
+    margin-bottom: 1rem;
+}
+  
+.banner-text .btn {
+    display: inline-block;
+    padding: 0.75rem 1.5rem;
+    background-color: #1b3a2f;
+    color: white;
+    text-decoration: none;
+    border-radius: 5px;
+    font-weight: bold;
+}
+  
+@media (max-width: 768px) {
+    .banner-text h1 {
+      font-size: 2rem;
+}
+
+.banner-text p {
+      font-size: 1rem;
+}
+}
+  
+/* BARRA DE NAV. */
+
+.container-fluid{
+    background-color: #143d33;
+}
+   
+.container-fluid{ /*logo*/
+    height: 85px;
+}
+   
+.container-fluid a{
+    color: rgb(243, 239, 239);
+    font-size: 16px;
+    font-weight: 500;
+}
+   
+.container-fluid lu{
+    text-align: right;
+}
+
+/* Fondo del menú desplegable en mobile */
+@media (max-width: 991.98px) {
+  .bg-navbar-mobile {
+    background-color: #143d33 !important;
+    padding: 1rem;
+  }
+
+  .navbar-nav .nav-link {
+    color: white !important;
+  }
+
+  .dropdown-menu {
+    background-color: #0f2d27 !important;
+  }
+
+  .dropdown-menu .dropdown-item {
+    color: white;
+  }
+
+  .dropdown-menu .dropdown-item:hover {
+    background-color: #1c5145;
+  }
+}
+   
+/* PRINCIPAL */
+   
+body {  
+    background-color: #f6f3ec;  
+} 
+   
+.titulo-seccion{
+    color: #143d33;
+    font-size: 40px;
+    font-weight: bold;
+}
+
+.card-title{
+    color: #143d33;
+    text-align: center;
+    font-weight: bold;
+    font-size: 20px;
+}
+
+.btn-verde{
+    background-color: #143d33;
+    color: white;
+    border: none;
+    font-weight: 500;
+}
+
+.btn-verde:hover {
+    background-color: #2e4c3d;
+    color: white;
+  }
+   
+/* FOOTER */
+   
+.footer{
+    background-color: #143d33;
+    width: 100%;
+    max-width: 100%;
+}
+
+.footer .suscripcion h5, p, a{
+        color: white;
+}
+   
+   /* NOSOTROS */
+   
+   .quienes-somos h1, h2, h3, h4, h5{
+       color: #143d33;
+   }
+
+   .quienes-somos p{
+        text-align: justify;
+        color: black;
+   }
+   
+   .img-local {
+       width: 100%;
+       max-height: 400px;
+       object-fit: cover;
+       border-radius: 12px;
+       box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+   }
+     
+   /* COMERCIALIZACIÓN */
+   
+   .comercializacion, .terminos_y_usos h1, h4{
+       color: #143d33;
+   }
+
+   .comercializacion p{
+    color: black;
+   }
+   
+   /* CONTACTO */
+   
+   .bg-verde-form {
+       background-color: #143d33;
+       color: white;
+       border: none;
+     }
+     
+     .form-control {
+       border: 1px solid #ccc;
+       background-color: white;
+       color: #333;
+     }
+     
+   .form-control:focus {
+       border-color: #22c55e;
+       box-shadow: 0 0 5px rgba(34, 197, 94, 0.5);
+   }
+     
+   .form-label {
+       color: white;
+   }
+   
+   .icono-verde {
+       color: #143d33 !important;
+   }
+
+   .info-contacto p{
+    color: black;
+   }
+
+   /* -------- TERMINOS Y USOS -------- */
+
+   .terminos_y_usos p{
+     color: black;
+   }
+
+/* -------- CATÁLOGO -------- */
+
+.catalogo p{
+    color: black;
+}
+
+.catalogo h2{
+    text-align: center;
+    font-size: 45px;
+    font-weight: 700;
+    padding-bottom: 4px;
+}
+
+/* -------- REGISTRO -------- */
+
+.form-registro{
+    padding-top: 2.5rem;
+    justify-content: center;
+}
+
+.form-registro h2{
+    color: white;
+    font-weight: bold;
+    text-align: center;
+    padding: 4px 4px; 
+}
+
+.mi-alerta {
+  color: white;
+  padding: 15px;
+  border-radius: 10px;
+  margin-top: 10px;
+}
