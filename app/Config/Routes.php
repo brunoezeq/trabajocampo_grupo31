@@ -1,8 +1,34 @@
 <?php
 
-use CodeIgniter\Router\RouteCollection;
+namespace Config;
 
-/**
- * @var RouteCollection $routes
+// Create a new instance of our RouteCollection class.
+$routes = Services::routes();
+
+if(file_exists (SYSTEMPATH . 'Config/Routes.php')){
+    require SYSTEMPATH . 'Config/Routes.php'; 
+}
+
+/*
+ * --------------------------------------------------------------------
+ * Router Setup
+ * --------------------------------------------------------------------
  */
+$routes->setDefaultNamespace('App\Controllers');
+$routes->setDefaultController('Home');
+$routes->setDefaultMethod('index');
+$routes->setTranslateURIDashes(false);
+$routes->set404Override();
+
+/*
+ * --------------------------------------------------------------------
+ * Route Definitions
+ * --------------------------------------------------------------------
+ */
+
 $routes->get('/', 'Home::index');
+$routes->get('principal', 'Home::index');
+$routes->get('contacto', 'Home::contacto');                             
+$routes->get('comercializacion', 'Home::comercializacion');             
+$routes->get('terminos_y_usos', 'Home::terminos');                      
+$routes->get('quienes_somos', 'Home::somos'); 
