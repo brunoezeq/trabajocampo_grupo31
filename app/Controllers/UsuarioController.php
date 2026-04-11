@@ -1,0 +1,168 @@
+<?php
+
+namespace App\Controllers;
+
+use App\Models\usuario_model; 
+use App\Models\consulta_model;
+use App\Models\venta_model;
+use App\Models\detalle_venta_model;
+
+class UsuarioController extends BaseController{
+
+    public function registro(): string
+    {
+        $data["titulo"] = "Registro";
+        return view('front/header', $data)
+         . view('front/registro')
+         . view('front/footer');
+    }
+
+    public function login(): string
+    {
+        $data["titulo"] = "Login";
+        return view('front/header', $data)
+         . view('front/login')
+         . view('front/footer');
+    }
+
+    //FUNCION PARA REGISTRAR UN USUARIO
+    public function registrarUsuario(){
+        $validation = \Config\Services::validation();
+        $request = \Config\Services::request();
+
+        $validation->setRules(
+            ['nombre'       => 'required|min_length[3]|max_length[50]',
+             'apellido'     => 'required|min_length[3]|max_length[50]',
+             'usuario'      => 'required|max_length[100]|is_unique[usuario.usuario]',
+             'contraseña'   => 'required|max_length[100]',
+             'confirmar_contraseña' => 'required|matches[contraseña]'
+        ],
+            [ //Errores
+                'nombre'        => [ 'required' => 'El nombre es obligatorio',
+                                     'min_length' => 'El nombre debe superar los 3 caracteres',
+                                     'max_length' => 'El nombre no debe superar los 50 caracteres'],
+                'apellido'       => [ 'required' => 'El apellido es obligatorio',
+                                      'min_length' => 'El apellido debe superar los 3 caracteres',
+                                      'max_length' => 'El apellido no debe superar los 50 caracteres'],
+                'usuario'       => [ 'required' => 'El usuario es obligatorio',
+                                     'is_unique' => 'El usuario ya esta registrado'],
+                'contraseña'    => [ 'required'   => 'La contraseña es obligatoria'],
+                'confirmar_contraseña' => [ 'required' => 'Debes confirmar la contraseña',
+                                            'matches'  => 'Las contraseñas no coinciden']
+            ]
+        );
+
+         if($validation->withRequest($request)->run()){
+            $data = [
+                'nombre_usuario' => $request->getPost('nombre'),
+                'apellido_usuario' => $request->getPost('apellido'),
+                'usuario' => $request->getPost('usuario'),
+                'contraseña_usuario' => password_hash($request->getPost('contraseña'), PASSWORD_BCRYPT),
+                'perfil_id' => 2,
+                'estado_usuario' => 1
+            ];
+
+            $usuario = new usuario_model();
+            $usuario->insert($data);
+
+            return redirect()->route('login')->with('mensaje', 'Usuario registrado con éxito');
+
+        }else{
+
+            $data['titulo'] = 'Registro';
+            $data['validation'] = $validation->getErrors();
+            
+            return view('front/header', $data)
+                   .view('front/registro')
+                   .view('front/footer'); 
+        }
+    }
+
+    //FUNCIÓN PARA INICIAR SESIÓN    
+    public function iniciarSesion()
+    {
+        helper(['form']);
+        
+        // Validar entrada
+       $validation = \Config\Services::validation();
+       $request = \Config\Services::request();
+
+       $validation->setRules(
+            [   'usuario'    => 'required',
+                'contraseña' => 'required'
+        ],
+            [ //Errores
+                'usuario'    => ['required' => 'Debe ingresar el usuario'],
+                'contraseña' => ['required' => 'Debe ingresar la contraseña'],
+            ]
+        );
+
+       if(!$validation->withRequest($request)->run()){
+
+            $data['titulo'] = 'Iniciar Sesión';
+            $data['validation'] = $validation->getErrors();
+            return view('front/header', $data)
+                   .view('front/login')
+                   .view('front/footer'); 
+
+        }
+
+        $usuario = $this->request->getPost('usuario');
+        $contrasenia = $this->request->getPost('contraseña');
+
+        $usuarioModel = new \App\Models\Usuario_model();
+        $usuarioData = $usuarioModel->where('usuario', $usuario)->first();
+
+        if (is_array($usuarioData) && isset($usuarioData['contraseña_usuario'])) {
+
+            if (password_verify($contrasenia, $usuarioData['contraseña_usuario'])) {
+
+                if ($usuarioData['estado_usuario'] == 1) {
+ 
+                    $datosSesion = [
+                        'id_usuario' => $usuarioData['id_usuario'],
+                        'usuario_usuario' => $usuarioData['usuario'],
+                        'rol_usuario' => $usuarioData['perfil_id'],
+                        'estado_usuario' => $usuarioData['estado_usuario'],
+                        'logueado' => true
+                    ];
+
+                    session()->set($datosSesion);
+
+                    
+                    if ($usuarioData['perfil_id'] == '1') {
+                        return redirect()->to('user_admin');
+                    } else {
+                        return redirect()->to('/');
+                    }
+                } else {
+                    session()->setFlashdata('mensaje', 'El usuario está inactivo');
+                }
+                 } else {
+                    session()->setFlashdata('mensaje', 'Usuario o contraseña incorrectos');
+            }
+                } else {
+                    session()->setFlashdata('mensaje', 'Usuario o contraseña incorrectos');
+        }
+
+         $data['titulo'] = 'Iniciar Sesión';
+         return view('front/header', $data)
+         . view('front/login')
+         . view('front/footer');
+    }
+
+    //FUNCIÓN PARA CERRAR SESIÓN
+    public function cerrarSesion(){
+        $session = session();     
+        $session->destroy();      
+        return redirect()->to('/'); 
+    }
+
+    public function admin(){
+        $data['titulo'] = 'Index';
+        
+        return view('front/header_admin')
+               .view('backend/panel_admin')
+               .view('front/footer_admin');
+    }
+}

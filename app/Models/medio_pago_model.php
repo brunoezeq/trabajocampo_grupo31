@@ -3,17 +3,17 @@
 namespace App\Models;
 use CodeIgniter\Model;
 
-class detalle_venta_model extends Model
+class medio_pago_model extends Model
 {
-    protected $table      = 'detalle_venta';
-    protected $primaryKey = 'id_venta';
+    protected $table      = 'medio_pago';
+    protected $primaryKey = 'id';
 
-    protected $useAutoIncrement = true;
+    protected $useAutoIncrement = true; 
 
     protected $returnType     = 'array';
     protected $useSoftDeletes = false;
 
-    protected $allowedFields = ['venta_id', 'producto_id', 'detalle_cantidad', 'detalle_precio'];
+    protected $allowedFields = ['nombre'];
 
     protected bool $allowEmptyInserts = false;
     protected bool $updateOnlyChanged = true;
