@@ -13,7 +13,7 @@ class usuario_model extends Model
     protected $returnType     = 'array';
     protected $useSoftDeletes = false;
 
-    protected $allowedFields = ['nombre_usuario', 'apellido_usuario', 'usuario', 'contraseña_usuario', 'perfil_id', 'estado_usuario'];
+    protected $allowedFields = ['nombre_usuario', 'apellido_usuario', 'usuario', 'contraseÃ±a_usuario', 'perfil_id', 'estado_usuario'];
 
     protected bool $allowEmptyInserts = false;
     protected bool $updateOnlyChanged = true;

@@ -32,3 +32,11 @@ $routes->get('contacto', 'Home::contacto');
 $routes->get('comercializacion', 'Home::comercializacion');             
 $routes->get('terminos_y_usos', 'Home::terminos');                      
 $routes->get('quienes_somos', 'Home::somos'); 
+
+/* --- USUARIO --- */
+$routes->get('registro', 'UsuarioController::registro');  //muestra vista de registro
+$routes->get('login', 'UsuarioController::login');        // muestra vista para iniciar sesión
+$routes->post('registro', 'UsuarioController::registrarUsuario'); //registrar usuario
+$routes->post('verificarUsuario', 'UsuarioController::iniciarSesion'); 
+$routes->get('logout', 'UsuarioController::cerrarSesion'); 
+$routes->get('user_admin', 'UsuarioController::admin', ['filter' => 'roladmin']); 
