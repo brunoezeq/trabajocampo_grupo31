@@ -1,0 +1,12 @@
+#REDIRECCIONAR TRAFICO A PUBLIC
+
+<IfModule mod_rewrite.c>
+    RewriteEngine On
+    RewriteBase /trabajocampo_grupo31/
+
+    RewriteCond %{REQUEST_FILENAME} !-f
+    RewriteCond %{REQUEST_FILENAME} !-d
+
+    # Redirige internamente a public/
+    RewriteRule ^(.*)$ public/$1 [L]
+</IfModule>

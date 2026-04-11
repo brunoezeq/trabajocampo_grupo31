@@ -16,17 +16,17 @@ shrink-to-fit=no">
 <!-- Menú -->
 <nav class="navbar sticky-top navbar-expand-lg bg-body-tertiary p-0 m-0">
     <div class="container-fluid">
-      <a class="navbar-brand" href= "<?php echo base_url("public/principal");?>"><img src="<?= base_url('assets/img/logo.png') ?>" alt="logo" style="height: 100px;"></a> 
+      <a class="navbar-brand" href= "<?php echo base_url("/principal");?>"><img src="<?= base_url('assets/img/logo.png') ?>" alt="logo" style="height: 100px;"></a> 
       <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
         <span class="navbar-toggler-icon"></span>
       </button>
       <div class="collapse navbar-collapse bg-navbar-mobile" id="navbarSupportedContent">
         <ul class="navbar-nav ms-auto mb-2 mb-lg-0"> 
           <li class="nav-item">
-            <a class="nav-link " href= "<?php echo base_url("public/quienes_somos");?>">Nosotros</a>
+            <a class="nav-link " href= "<?php echo base_url("/quienes_somos");?>">Nosotros</a>
           </li>
           <li class="nav-item">
-            <a class="nav-link " href= "<?php echo base_url("public/contacto");?>">Contacto</a>
+            <a class="nav-link " href= "<?php echo base_url("/contacto");?>">Contacto</a>
           </li>
           <li class="nav-item dropdown">
             <a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">
@@ -34,15 +34,15 @@ shrink-to-fit=no">
             </a>
             <ul class="dropdown-menu" style="background-color: #143d33;">
             <li class="nav-item">
-              <a class="nav-link " href= "<?php echo base_url("public/comercializacion");?>">Comercialización</a>
+              <a class="nav-link " href= "<?php echo base_url("/comercializacion");?>">Comercialización</a>
             </li>
             <li class="nav-item">
-              <a class="nav-link" href= "<?php echo base_url("public/terminos_y_usos");?>">Términos y Usos</a>
+              <a class="nav-link" href= "<?php echo base_url("/terminos_y_usos");?>">Términos y Usos</a>
             </li>
             </ul>
           </li> 
           <li class="nav-item">
-            <a class="nav-link" href= "<?php echo base_url("public/catalogo");?>">Catálogo</a>
+            <a class="nav-link" href= "<?php echo base_url("/catalogo");?>">Catálogo</a>
           </li>
           <?php if(session('logueado')) { ?>
             <li class="nav-item dropdown">
@@ -59,10 +59,10 @@ shrink-to-fit=no">
             </li>
           <?php } else { ?>
             <li class="nav-item">
-                <a class="nav-link" href= "<?php echo base_url("public/registro");?>">Registrarse</a>
+                <a class="nav-link" href= "<?php echo base_url("/registro");?>">Registrarse</a>
             </li>
             <li class="nav-item">
-                <a class="nav-link" href= "<?php echo base_url("public/login");?>">Iniciar Sesión</a>
+                <a class="nav-link" href= "<?php echo base_url("/login");?>">Iniciar Sesión</a>
             </li>
           <?php } ?>
         </ul>
