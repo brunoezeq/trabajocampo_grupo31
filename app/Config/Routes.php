@@ -40,3 +40,13 @@ $routes->post('registro', 'UsuarioController::registrarUsuario'); //registrar us
 $routes->post('verificarUsuario', 'UsuarioController::iniciarSesion'); 
 $routes->get('logout', 'UsuarioController::cerrarSesion'); 
 $routes->get('user_admin', 'UsuarioController::admin', ['filter' => 'roladmin']); 
+
+/* --- PRODUCTOS --- */
+$routes->get('catalogo', 'ProductoController::mostrarCatalogo'); //muestra vista catálogo
+$routes->get('cargarProducto', 'ProductoController::formularioCargarProducto', ['filter' => 'roladmin']); //registra producto
+$routes->post('cargarProducto', 'ProductoController::cargarProducto', ['filter' => 'roladmin']); // muestra vista cargar producto
+$routes->get('gestionarProducto', 'ProductoController::gestionarProducto', ['filter' => 'roladmin']); //muestra vista gestionar producto
+$routes->get('editarProducto/(:num)', 'ProductoController::editarProducto/$1', ['filter' => 'roladmin']);
+$routes->post('actualizar', 'ProductoController::actualizarProducto', ['filter' => 'roladmin']);
+$routes->get('eliminarProducto/(:num)', 'ProductoController::eliminarProducto/$1', ['filter' => 'roladmin']);
+$routes->get('activarProducto/(:num)', 'ProductoController::activarProducto/$1', ['filter' => 'roladmin']);
