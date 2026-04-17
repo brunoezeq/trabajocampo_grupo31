@@ -134,8 +134,7 @@ $validation->setRules([
                 'piso'          => $request->getPost('piso'),
                 'departamento'  => $request->getPost('departamento'),
                 'codigo_postal' => $request->getPost('codigo_postal'),
-                'localidad_id'  => $request->getPost('localidad_id'),
-                'provincia_id'  => $request->getPost('provincia_id') 
+                'localidad_id'  => $request->getPost('localidad_id')
             ];
             $domicilioModel->insert($datosDomicilio);
             $nuevoDomicilioId = $domicilioModel->getInsertID();

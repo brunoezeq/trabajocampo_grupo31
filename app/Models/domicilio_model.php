@@ -16,7 +16,6 @@ class Domicilio_model extends Model
         'piso', 
         'departamento', 
         'codigo_postal', 
-        'localidad_id',
-        'provincia_id' 
+        'localidad_id'
     ];
 }

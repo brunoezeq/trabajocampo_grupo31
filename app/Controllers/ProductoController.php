@@ -23,29 +23,29 @@ class ProductoController extends BaseController{
         $request = \Config\Services::request();
         
         $validation->setRules(
-            ['nombre'   => 'required|min_length[3]|max_length[50]',
-             'descripcion' => 'required|min_length[10]|max_length[100]',
+            ['nombre'   => 'required|min_length[5]|max_length[50]',
+             'descripcion' => 'required|min_length[5]|max_length[100]',
              'categoria'   =>  'required|is_not_unique[categoria.id_categoria]',
              'imagen' => 'uploaded[imagen]|max_size[imagen,4060]|is_image[imagen]',
-             'precio' => 'required|min_length[3]|max_length[10]',
+             'precio' => 'required|min_length[1]|max_length[10]',
              'stock' => 'required|min_length[1]|max_length[10]'
 
         ],
             [ //Errores
                 'nombre'       => [ 'required'   => 'El nombre es obligatorio',
-                                    'min_length' => 'El nombre debe superar los 5 caracteres',
-                                    'max_length' => 'La consulta no debe superar los 50 caracteres'],
+                                    'min_length' => 'El nombre debe tener al menos 5 caracteres',
+                                    'max_length' => 'El nombre debe tener al menos 50 caracteres'],
                 'descripcion'  => [ 'required'   => 'La descripción es obligatoria',
-                                    'min_length' => 'El nombre debe superar los 5 caracteres',
-                                    'max_length' => 'La consulta no debe superar los 50 caracteres'],
+                                    'min_length' => 'La descripcion debe teber al menos 5 caracteres',
+                                    'max_length' => 'La descripcion no debe superar los 50 caracteres'],
                 'categoria'    => [ 'required'   => 'La categoría es obligatoria'],
                 'imagen'       => [ 'uploaded' => 'Debe seleccionar una imagen',
                                     'is_image' => 'Debe ser una imagen valida'], 
                 'precio'       => [ 'required'   => 'El precio es obligatorio',
-                                    'min_length' => 'El precio debe superar los 10 caracteres',
+                                    'min_length' => 'El precio debe tener al menos 1 caracter',
                                     'max_length' => 'El precio no debe superar los 100 caracteres'],
                 'stock'        => [ 'required'   => 'El stock es obligatorio',
-                                    'min_length' => 'El stock debe superar los 1 caracteres',
+                                    'min_length' => 'El stock debe tener al menos 1 caracter',
                                     'max_length' => 'El stock no debe superar los 100 caracteres'],
             ]
         );
