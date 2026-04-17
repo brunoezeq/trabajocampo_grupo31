@@ -13,7 +13,6 @@ class usuario_model extends Model
     protected $returnType       = 'array';
     protected $useSoftDeletes = false;
 
-    // Agregados dni, celular y domicilio_id aquí:
     protected $allowedFields = [
         'nombre_usuario', 
         'apellido_usuario', 
@@ -36,5 +35,4 @@ class usuario_model extends Model
     protected $updatedField  = 'updated_at';
     protected $deletedField  = 'deleted_at';
 
-    // ... resto de tu configuración (Validations, Callbacks, etc.)
 }

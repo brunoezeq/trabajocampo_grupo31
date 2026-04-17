@@ -15,14 +15,13 @@ class UsuarioController extends BaseController{
 public function registro(): string
     {
         $localidadModel = new \App\Models\localidad_model();
-        $provinciaModel = new \App\Models\Provincia_model(); // Instanciamos el modelo de provincia
+        $provinciaModel = new \App\Models\Provincia_model(); 
 
         $data['localidades'] = $localidadModel->findAll();
-        $data['provincias']  = $provinciaModel->findAll(); // Obtenemos todas las provincias
-        $data['titulo']      = 'Registro';
+        $data['provincias']  = $provinciaModel->findAll(); 
 
         return view('front/header', $data)
-             . view('front/registro', $data) // Asegúrate de pasar $data a la vista
+             . view('front/registro', $data) 
              . view('front/footer');
     }
 
