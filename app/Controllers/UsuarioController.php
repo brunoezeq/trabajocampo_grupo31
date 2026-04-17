@@ -20,6 +20,7 @@ public function registro(): string
         $data['localidades'] = $localidadModel->findAll();
         $data['provincias']  = $provinciaModel->findAll(); 
 
+         $data["titulo"] = "Login";
         return view('front/header', $data)
              . view('front/registro', $data) 
              . view('front/footer');
