@@ -40,6 +40,7 @@ $routes->post('registro', 'UsuarioController::registrarUsuario'); //registrar us
 $routes->post('verificarUsuario', 'UsuarioController::iniciarSesion'); 
 $routes->get('logout', 'UsuarioController::cerrarSesion'); 
 $routes->get('user_admin', 'UsuarioController::admin', ['filter' => 'roladmin']); 
+$routes->get('usuario/getLocalidadesPorProvincia/(:num)', 'UsuarioController::getLocalidadesPorProvincia/$1');// ruta para obtener localidades por provincia (registro)
 
 /* --- PRODUCTOS --- */
 $routes->get('catalogo', 'ProductoController::mostrarCatalogo'); //muestra vista catálogo
@@ -50,3 +51,5 @@ $routes->get('editarProducto/(:num)', 'ProductoController::editarProducto/$1', [
 $routes->post('actualizar', 'ProductoController::actualizarProducto', ['filter' => 'roladmin']);
 $routes->get('eliminarProducto/(:num)', 'ProductoController::eliminarProducto/$1', ['filter' => 'roladmin']);
 $routes->get('activarProducto/(:num)', 'ProductoController::activarProducto/$1', ['filter' => 'roladmin']);
+
+

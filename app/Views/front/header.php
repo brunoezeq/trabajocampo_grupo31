@@ -9,6 +9,7 @@ shrink-to-fit=no">
 <link rel="icon" type="image/png" href="<?= base_url('assets/img/icono.png') ?>">
 <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.5/font/bootstrap-icons.css" rel="stylesheet"> <!-- enlace iconos boostrap-->
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/4.1.1/animate.min.css"/>  <!-- enlace iconos boostrap-->
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
 </head>  
 
 <body>  

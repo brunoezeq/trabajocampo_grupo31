@@ -15,9 +15,11 @@
         </div>
         <?php endif ?>
 
-        <?php if(session('mensaje')){
-          echo session('mensaje');
-        } ?>
+   <?php if(session('mensaje')): ?>
+    <h3 class="text-white display-6 font-weight-bold">
+        <?= session('mensaje'); ?>
+    </h3>
+<?php endif; ?>
 
         <?php echo form_open('verificarUsuario') ?>
           <div class="mb-3">
