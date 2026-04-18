@@ -41,4 +41,9 @@ class categoria_model extends Model
     protected $afterFind      = [];
     protected $beforeDelete   = [];
     protected $afterDelete    = [];
+
+    public function obtenerCategorias()
+    {
+        return $this->findAll();
+    }
 }

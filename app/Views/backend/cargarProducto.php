@@ -32,8 +32,8 @@
                     </div>
 
                     <div class="mb-3">
-                        <label for="descripcion" class="form-label">Descripción del Producto</label>
-                        <?= form_input(['name' => 'descripcion', 'id' => 'descripcion', 'class' => 'form-control', 'placeholder' => 'Ingrese la descripción del producto', 'value' => set_value('descripcion')]) ?>
+                        <label for="descripcion" class="form-label">Descripciï¿½n del Producto</label>
+                        <?= form_input(['name' => 'descripcion', 'id' => 'descripcion', 'class' => 'form-control', 'placeholder' => 'Ingrese la descripciï¿½n del producto', 'value' => set_value('descripcion')]) ?>
                     </div>
 
                     <div class="mb-3">
@@ -42,9 +42,9 @@
                     </div>
 
                     <div class="mb-3">
-                        <label for="categoria" class="form-label">Categoría</label>
+                        <label for="categoria" class="form-label">Categorï¿½a</label>
                         <?php
-                            $lista['0'] = 'Seleccione la categoría';
+                            $lista['0'] = 'Seleccione la categorï¿½a';
                             foreach ($categoria as $row) {
                                 $lista[$row['id_categoria']] = $row['descripcion_categoria'];
                             }

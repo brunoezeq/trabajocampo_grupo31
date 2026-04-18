@@ -21,8 +21,8 @@
             <thead class="table-dark text-center">
                 <tr>
                     <th>Nombre</th>
-                    <th>Descripción</th>
-                    <th>Categoría</th>
+                    <th>Descripciï¿½n</th>
+                    <th>Categorï¿½a</th>
                     <th>Imagen</th>
                     <th>Precio</th>
                     <th>Stock</th>

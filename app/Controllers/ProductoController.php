@@ -6,9 +6,10 @@ use App\Models\categoria_model;
 
 class ProductoController extends BaseController{
 
+
     public function formularioCargarProducto(){
         $categoria = new categoria_model(); 
-        $data['categoria'] = $categoria->findAll();
+        $data['categoria'] = $categoria->obtenerCategorias();
         $data['titulo'] = 'Cargar Producto';
 
 
@@ -35,10 +36,10 @@ class ProductoController extends BaseController{
                 'nombre'       => [ 'required'   => 'El nombre es obligatorio',
                                     'min_length' => 'El nombre debe tener al menos 5 caracteres',
                                     'max_length' => 'El nombre debe tener al menos 50 caracteres'],
-                'descripcion'  => [ 'required'   => 'La descripción es obligatoria',
+                'descripcion'  => [ 'required'   => 'La descripciï¿½n es obligatoria',
                                     'min_length' => 'La descripcion debe teber al menos 5 caracteres',
                                     'max_length' => 'La descripcion no debe superar los 50 caracteres'],
-                'categoria'    => [ 'required'   => 'La categoría es obligatoria'],
+                'categoria'    => [ 'required'   => 'La categorï¿½a es obligatoria'],
                 'imagen'       => [ 'uploaded' => 'Debe seleccionar una imagen',
                                     'is_image' => 'Debe ser una imagen valida'], 
                 'precio'       => [ 'required'   => 'El precio es obligatorio',
@@ -66,7 +67,7 @@ class ProductoController extends BaseController{
 
             $producto = new producto_model();
             $producto->insert($data);
-            return redirect()->to('/cargarProducto')->with('mensaje', '¡Producto cargado con éxito!');
+            return redirect()->to('/cargarProducto')->with('mensaje', 'ï¿½Producto cargado con ï¿½xito!');
  
 
         }else{
@@ -89,7 +90,7 @@ class ProductoController extends BaseController{
 
         $busqueda = $this->request->getGet('busqueda');
       
-        $data['categoria'] = $categoria->findAll();
+        $data['categoria'] = $categoria->obtenerCategorias();
 
         $query = $producto->select('producto.*, categoria.descripcion_categoria')
                         ->join('categoria', 'categoria.id_categoria = producto.categoria_producto');
@@ -118,7 +119,7 @@ class ProductoController extends BaseController{
         $producto = new producto_model();
         $categoria = new categoria_model();
 
-        $data['categoria'] = $categoria->findAll();
+        $data['categoria'] = $categoria->obtenerCategorias();
         $data['producto'] = $producto->where('id_producto', $id)->first();
         $data['titulo'] = 'Editar Producto'; 
 
@@ -152,27 +153,27 @@ class ProductoController extends BaseController{
                     'max_length' => 'El nombre no debe superar los 50 caracteres'
                 ],
                 'descripcion' => [
-                    'required'   => 'La descripción es obligatoria',
-                    'min_length' => 'La descripción debe superar los 10 caracteres',
-                    'max_length' => 'La descripción no debe superar los 100 caracteres'
+                    'required'   => 'La descripciÃ³n es obligatoria',
+                    'min_length' => 'La descripciÃ³n debe superar los 10 caracteres',
+                    'max_length' => 'La descripciÃ³n no debe superar los 100 caracteres'
                 ],
                 'imagen' => 
                 [   'uploaded' => 'Debe seleccionar una imagen',
                     'is_image' => 'Debe ser una imagen valida'
                 ], 
                 'categoria' => [
-                    'required'     => 'La categoría es obligatoria',
-                    'is_not_unique'=> 'La categoría seleccionada no es válida'
+                    'required'     => 'La categorï¿½a es obligatoria',
+                    'is_not_unique'=> 'La categorï¿½a seleccionada no es vï¿½lida'
                 ],
                 'precio' => [
                     'required'   => 'El precio es obligatorio',
-                    'min_length' => 'El precio debe tener al menos 1 dígito',
-                    'max_length' => 'El precio no debe superar los 10 dígitos'
+                    'min_length' => 'El precio debe tener al menos 1 dï¿½gito',
+                    'max_length' => 'El precio no debe superar los 10 dï¿½gitos'
                 ],
                 'stock' => [
                     'required'   => 'El stock es obligatorio',
-                    'min_length' => 'El stock debe tener al menos 1 dígito',
-                    'max_length' => 'El stock no debe superar los 10 dígitos'
+                    'min_length' => 'El stock debe tener al menos 1 dï¿½gito',
+                    'max_length' => 'El stock no debe superar los 10 dï¿½gitos'
                 ]
             ]
         );
@@ -198,7 +199,7 @@ class ProductoController extends BaseController{
             $producto = new producto_model();
             $producto->update($id, $data);
 
-            return redirect()->to(base_url('gestionarProducto'))->with('mensaje', '¡Producto actualizado con éxito!');
+            return redirect()->to(base_url('gestionarProducto'))->with('mensaje', 'Producto actualizado con Ã©xito!');
         } else {
             return redirect()->back()
                             ->withInput()
@@ -211,7 +212,7 @@ class ProductoController extends BaseController{
         $data = ['estado_producto' => 0]; 
         $producto = new producto_model();
         $producto->update($id, $data);
-        return redirect()->route('gestionarProducto')->with('mensaje', 'Producto eliminado con éxito');
+        return redirect()->route('gestionarProducto')->with('mensaje', 'Producto eliminado con Ã©xito');
 
     }
 
@@ -219,7 +220,7 @@ class ProductoController extends BaseController{
         $data = ['estado_producto' => 1];
         $producto = new producto_model();
         $producto->update($id, $data);
-        return redirect()->route('gestionarProducto')->with('mensaje', 'Producto activado con éxito');
+        return redirect()->route('gestionarProducto')->with('mensaje', 'Producto activado con Ã©xito');
  
     }
 
@@ -249,7 +250,7 @@ class ProductoController extends BaseController{
         $data['precioSeleccionado'] = $precio;
         $data['categoriaSeleccionada'] = $categoria;
 
-        $data['titulo'] = 'Catálogo';
+        $data['titulo'] = 'Catï¿½logo';
 
         return view('front/header', $data)
             . view('front/catalogo')

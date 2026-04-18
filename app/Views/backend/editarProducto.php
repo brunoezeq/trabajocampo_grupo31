@@ -30,7 +30,7 @@
                     </div>
 
                     <div class="mb-3">
-                        <label for="descripcion" class="form-label">Descripción del Producto</label>
+                        <label for="descripcion" class="form-label">Descripci n del Producto</label>
                         <?= form_input([
                             'name' => 'descripcion',
                             'id' => 'descripcion',
@@ -45,9 +45,9 @@
                     </div>
 
                     <div class="mb-3">
-                        <label for="categoria" class="form-label">Categoría</label>
+                        <label for="categoria" class="form-label">Categor a</label>
                         <?php
-                            $lista['0'] = 'Seleccione la categoría';
+                            $lista['0'] = 'Seleccione la categor a';
                             foreach ($categoria as $row) {
                                 $lista[$row['id_categoria']] = $row['descripcion_categoria'];
                             }
