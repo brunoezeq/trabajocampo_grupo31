@@ -24,37 +24,38 @@ class ProductoController extends BaseController{
         $request = \Config\Services::request();
         
         $validation->setRules(
-            ['nombre'   => 'required|min_length[5]|max_length[50]',
-             'descripcion' => 'required|min_length[5]|max_length[100]',
+            ['nombre'   => 'required|min_length[5]|max_length[20]',
+             'descripcion' => 'required|min_length[5]|max_length[50]',
              'categoria'   =>  'required|is_not_unique[categoria.id_categoria]',
              'imagen' => 'uploaded[imagen]|max_size[imagen,4060]|is_image[imagen]',
              'precio' => 'required|min_length[1]|max_length[10]',
              'stock' => 'required|min_length[1]|max_length[10]'
 
         ],
-            [ //Errores
+            [
                 'nombre'       => [ 'required'   => 'El nombre es obligatorio',
                                     'min_length' => 'El nombre debe tener al menos 5 caracteres',
-                                    'max_length' => 'El nombre debe tener al menos 50 caracteres'],
-                'descripcion'  => [ 'required'   => 'La descripci�n es obligatoria',
-                                    'min_length' => 'La descripcion debe teber al menos 5 caracteres',
-                                    'max_length' => 'La descripcion no debe superar los 50 caracteres'],
-                'categoria'    => [ 'required'   => 'La categor�a es obligatoria'],
+                                    'max_length' => 'El nombre no debe superar los 20 caracteres'],
+                'descripcion'  => [ 'required'   => 'La descripción es obligatoria',
+                                    'min_length' => 'La descripción debe teber al menos 5 caracteres',
+                                    'max_length' => 'La descripción no debe superar los 50 caracteres'],
+                'categoria'    => [ 'required'   => 'La categoría es obligatoria',
+                                    'is_not_unique'=> 'La categoría seleccionada no es válida'],
                 'imagen'       => [ 'uploaded' => 'Debe seleccionar una imagen',
                                     'is_image' => 'Debe ser una imagen valida'], 
                 'precio'       => [ 'required'   => 'El precio es obligatorio',
-                                    'min_length' => 'El precio debe tener al menos 1 caracter',
-                                    'max_length' => 'El precio no debe superar los 100 caracteres'],
+                                    'min_length' => 'El precio debe tener al menos 1 dígito',
+                                    'max_length' => 'El precio no debe superar los 10 dígitos'],
                 'stock'        => [ 'required'   => 'El stock es obligatorio',
-                                    'min_length' => 'El stock debe tener al menos 1 caracter',
-                                    'max_length' => 'El stock no debe superar los 100 caracteres'],
+                                    'min_length' => 'El stock debe tener al menos 1 dígito',
+                                    'max_length' => 'El stock no debe superar los 10 dígitos'],
             ]
         );
 
         if($validation->withRequest($request)->run()){
             $img = $this->request->getFile('imagen');
             $nombre_aleatorio = $img->getRandomName();
-            $img->move(ROOTPATH.'public/assest/img', $nombre_aleatorio); 
+            $img->move(ROOTPATH.'public/assets/img', $nombre_aleatorio); 
             $data = [
                 'nombre_producto' => $request->getPost('nombre'),
                 'descripcion_producto' => $request->getPost('descripcion'),
@@ -67,7 +68,7 @@ class ProductoController extends BaseController{
 
             $producto = new producto_model();
             $producto->insert($data);
-            return redirect()->to('/cargarProducto')->with('mensaje', '�Producto cargado con �xito!');
+            return redirect()->to('/cargarProducto')->with('mensaje', 'Producto cargado con éxito!');
  
 
         }else{
@@ -139,8 +140,8 @@ class ProductoController extends BaseController{
 
         $validation->setRules(
             [
-                'nombre'      => 'required|min_length[3]|max_length[50]',
-                'descripcion' => 'required|min_length[10]|max_length[100]',
+                'nombre'      => 'required|min_length[5]|max_length[20]',
+                'descripcion' => 'required|min_length[5]|max_length[50]',
                 'imagen' => 'uploaded[imagen]|max_size[imagen,4060]|is_image[imagen]',
                 'categoria'   => 'required|is_not_unique[categoria.id_categoria]',
                 'precio'      => 'required|min_length[1]|max_length[10]',
@@ -149,31 +150,31 @@ class ProductoController extends BaseController{
             [
                 'nombre' => [
                     'required'   => 'El nombre es obligatorio',
-                    'min_length' => 'El nombre debe superar los 3 caracteres',
-                    'max_length' => 'El nombre no debe superar los 50 caracteres'
+                    'min_length' => 'El nombre debe tener al menos 5 caracteres',
+                    'max_length' => 'El nombre no debe superar los 20 caracteres'
                 ],
                 'descripcion' => [
                     'required'   => 'La descripción es obligatoria',
-                    'min_length' => 'La descripción debe superar los 10 caracteres',
-                    'max_length' => 'La descripción no debe superar los 100 caracteres'
+                    'min_length' => 'La descripción debe tener al menos 5 caracteres',
+                    'max_length' => 'La descripción no debe superar los 50 caracteres'
                 ],
                 'imagen' => 
                 [   'uploaded' => 'Debe seleccionar una imagen',
                     'is_image' => 'Debe ser una imagen valida'
                 ], 
                 'categoria' => [
-                    'required'     => 'La categor�a es obligatoria',
-                    'is_not_unique'=> 'La categor�a seleccionada no es v�lida'
+                    'required'     => 'La categoría es obligatoria',
+                    'is_not_unique'=> 'La categoría seleccionada no es válida'
                 ],
                 'precio' => [
                     'required'   => 'El precio es obligatorio',
-                    'min_length' => 'El precio debe tener al menos 1 d�gito',
-                    'max_length' => 'El precio no debe superar los 10 d�gitos'
+                    'min_length' => 'El precio debe tener al menos 1 dígito',
+                    'max_length' => 'El precio no debe superar los 10 dígitos'
                 ],
                 'stock' => [
                     'required'   => 'El stock es obligatorio',
-                    'min_length' => 'El stock debe tener al menos 1 d�gito',
-                    'max_length' => 'El stock no debe superar los 10 d�gitos'
+                    'min_length' => 'El stock debe tener al menos 1 dígito',
+                    'max_length' => 'El stock no debe superar los 10 dígitos'
                 ]
             ]
         );
@@ -183,7 +184,7 @@ class ProductoController extends BaseController{
             
             $imagen = $request->getFile('imagen');
             $nombre_aleatorio = $imagen->getRandomName();
-            $imagen->move(ROOTPATH.'public/assest/img', $nombre_aleatorio); 
+            $imagen->move(ROOTPATH.'public/assets/img', $nombre_aleatorio); 
 
             $id = $request->getPost('id');
 

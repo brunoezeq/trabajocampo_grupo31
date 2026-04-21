@@ -20,7 +20,7 @@
                     <?= form_open_multipart(base_url('actualizar')) ?>
 
                     <div class="mb-3">
-                        <label for="nombre" class="form-label">Nombre del Producto</label>
+                        <label for="nombre" class="form-label text-black">Nombre del Producto</label>
                         <?= form_input([
                             'name' => 'nombre',
                             'id' => 'nombre',
@@ -30,7 +30,7 @@
                     </div>
 
                     <div class="mb-3">
-                        <label for="descripcion" class="form-label">Descripci n del Producto</label>
+                        <label for="descripcion" class="form-label text-black">Descripción del Producto</label>
                         <?= form_input([
                             'name' => 'descripcion',
                             'id' => 'descripcion',
@@ -39,13 +39,14 @@
                         ]) ?>
                     </div>
 
-                    <div class="mb-3">
+                           <div class="mb-3">
                         <label for="imagen" class="form-label">Imagen del Producto</label>
-                        <?= form_input(['name' => 'imagen', 'id' => 'imagen', 'class' => 'form-control', 'type' => 'file']) ?>
+                        <?= form_input(['name' => 'imagen', 'id' => 'imagen', 'class' => 'form-control', 'type' => 'file','accept'=> 'image/*' ]) ?>
                     </div>
 
+
                     <div class="mb-3">
-                        <label for="categoria" class="form-label">Categor a</label>
+                        <label for="categoria" class="form-label text-black">Categoría</label>
                         <?php
                             $lista['0'] = 'Seleccione la categor a';
                             foreach ($categoria as $row) {
@@ -57,7 +58,7 @@
                     </div>
 
                     <div class="mb-3">
-                        <label for="precio" class="form-label">Precio</label>
+                        <label for="precio" class="form-label text-black">Precio</label>
                         <?= form_input([
                             'name' => 'precio',
                             'id' => 'precio',
@@ -67,7 +68,7 @@
                     </div>
 
                     <div class="mb-3">
-                        <label for="stock" class="form-label">Stock</label>
+                        <label for="stock" class="form-label text-black">Stock</label>
                         <?= form_input([
                             'name' => 'stock',
                             'id' => 'stock',

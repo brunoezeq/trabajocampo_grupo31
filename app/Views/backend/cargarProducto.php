@@ -27,24 +27,24 @@
                     <?= form_open_multipart('cargarProducto') ?> 
 
                     <div class="mb-3">
-                        <label for="nombre" class="form-label">Nombre del Producto</label>
+                        <label for="nombre" class="form-label text-black">Nombre del Producto</label>
                         <?= form_input(['name' => 'nombre', 'id' => 'nombre', 'class' => 'form-control', 'placeholder' => 'Ingrese el nombre del producto', 'value' => set_value('nombre')]) ?>
                     </div>
 
                     <div class="mb-3">
-                        <label for="descripcion" class="form-label">Descripci�n del Producto</label>
-                        <?= form_input(['name' => 'descripcion', 'id' => 'descripcion', 'class' => 'form-control', 'placeholder' => 'Ingrese la descripci�n del producto', 'value' => set_value('descripcion')]) ?>
+                        <label for="descripcion" class="form-label text-black">Descripción del Producto</label>
+                        <?= form_input(['name' => 'descripcion', 'id' => 'descripcion', 'class' => 'form-control', 'placeholder' => 'Ingrese la descripción del producto', 'value' => set_value('descripcion')]) ?>
                     </div>
 
                     <div class="mb-3">
-                        <label for="imagen" class="form-label">Imagen del Producto</label>
+                        <label for="imagen" class="form-label text-black">Imagen del Producto</label>
                         <?= form_input(['name' => 'imagen', 'id' => 'imagen', 'class' => 'form-control', 'type' => 'file']) ?>
                     </div>
 
                     <div class="mb-3">
-                        <label for="categoria" class="form-label">Categor�a</label>
+                        <label for="categoria" class="form-label text-black">Categoría</label>
                         <?php
-                            $lista['0'] = 'Seleccione la categor�a';
+                            $lista['0'] = 'Seleccione la categoría';
                             foreach ($categoria as $row) {
                                 $lista[$row['id_categoria']] = $row['descripcion_categoria'];
                             }
@@ -53,12 +53,12 @@
                     </div>
 
                     <div class="mb-3">
-                        <label for="precio" class="form-label">Precio</label>
+                        <label for="precio" class="form-label text-black">Precio</label>
                         <?= form_input(['name' => 'precio', 'id' => 'precio', 'class' => 'form-control', 'placeholder' => 'Ingrese el precio del producto', 'value' => set_value('precio')]) ?>
                     </div>
 
                     <div class="mb-3">
-                        <label for="stock" class="form-label">Stock</label>
+                        <label for="stock" class="form-label text-black">Stock</label>
                         <?= form_input(['name' => 'stock', 'id' => 'stock', 'class' => 'form-control', 'placeholder' => 'Ingrese el stock del producto', 'value' => set_value('stock')]) ?>
                     </div>
 

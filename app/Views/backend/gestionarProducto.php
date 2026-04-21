@@ -21,8 +21,8 @@
             <thead class="table-dark text-center">
                 <tr>
                     <th>Nombre</th>
-                    <th>Descripci�n</th>
-                    <th>Categor�a</th>
+                    <th>Descripción</th>
+                    <th>Categoría</th>
                     <th>Imagen</th>
                     <th>Precio</th>
                     <th>Stock</th>
@@ -38,7 +38,7 @@
                             <td class="text-center"><?= esc($row['descripcion_producto'] ?? '') ?></td>
                             <td class="text-center"><?= esc($row['descripcion_categoria'] ?? '') ?></td>
                             <td class="text-center">
-                                <img src="<?= base_url('public/assest/img/'.$row['imagen_producto']) ?>" class="img-fluid rounded" style="max-width: 100px; height: auto;">
+                                <img src="<?= base_url('public/assets/img/'.$row['imagen_producto']) ?>" class="img-fluid rounded" style="max-width: 100px; height: auto;">
                             </td>
                             <td class="text-center">$<?= esc($row['precio_producto'] ?? '') ?></td>
                             <td class="text-center"><?= esc($row['stock_producto'] ?? '') ?></td>
