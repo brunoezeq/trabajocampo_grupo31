@@ -93,7 +93,7 @@ CREATE TABLE `medio_pago` (
 
 CREATE TABLE `perfil` (
   `id_perfil` int(11) NOT NULL,
-  `descripción_perfil` varchar(50) NOT NULL
+  `descripcion_perfil` varchar(50) NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 -- --------------------------------------------------------
@@ -356,19 +356,19 @@ COMMIT;
 -- LOTE DE DATOS
 
 -- Categoria
-INSERT INTO `categoria` (`nombre_categoria`) VALUES
+INSERT INTO `categoria` (`descripcion_categoria`) VALUES
 ('Café en Grano'),
 ('Café Molido'),
 ('Cafeteras'),
 ('Accesorios'),
 ('Kits de Regalo');
 
---Perfil
-INSERT INTO `perfil` (`nombre_perfil`) VALUES
+-- Perfil
+INSERT INTO `perfil` (`descripcion_perfil`) VALUES
 ('Administrador'),
 ('Cliente');
 
---Producto
+-- Producto
 INSERT INTO `producto` (`nombre_producto`, `descripcion_producto`, `precio_unitario`, `stock_actual`, `categoria_id`) VALUES
 ('Brasil Mogiana 250g', 'Notas de chocolate y nueces, baja acidez.', 9500.00, 30, 1),
 ('Colombia Huila 250g', 'Notas cítricas y dulces, cuerpo medio.', 11500.00, 25, 1),
@@ -379,12 +379,12 @@ INSERT INTO `producto` (`nombre_producto`, `descripcion_producto`, `precio_unita
 ('Filtros V60-02', 'Pack de 100 unidades de papel blanco.', 8200.00, 50, 4),
 ('Kit Barista Principiante', 'Incluye Prensa Francesa + 250g de café Brasil.', 26000.00, 5, 5);
 
---Provincia
+-- Provincia
 INSERT INTO `provincia` (`id_provincia`, `nombre_provincia`) VALUES
 (1, 'Chaco'),
 (2, 'Corrientes');
 
---Localidad
+-- Localidad
 INSERT INTO `localidad` (`id_localidad`, `nombre_localidad`, `provincia_id`) VALUES
 (18007010, 'Bella Vista', 2),
 (18014010, 'Berón de Astrada', 2),
