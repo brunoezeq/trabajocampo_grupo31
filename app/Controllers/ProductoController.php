@@ -251,7 +251,7 @@ class ProductoController extends BaseController{
         $data['precioSeleccionado'] = $precio;
         $data['categoriaSeleccionada'] = $categoria;
 
-        $data['titulo'] = 'Cat�logo';
+        $data['titulo'] = 'Catálogo';
 
         return view('front/header', $data)
             . view('front/catalogo')
