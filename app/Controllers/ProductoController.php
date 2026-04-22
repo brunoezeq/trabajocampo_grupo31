@@ -24,7 +24,7 @@ class ProductoController extends BaseController{
         $request = \Config\Services::request();
         
         $validation->setRules(
-            ['nombre'   => 'required|min_length[5]|max_length[20]',
+            ['nombre'   => 'required|min_length[5]|max_length[35]',
              'descripcion' => 'required|min_length[5]|max_length[50]',
              'categoria'   =>  'required|is_not_unique[categoria.id_categoria]',
              'imagen' => 'uploaded[imagen]|max_size[imagen,4060]|is_image[imagen]',
@@ -35,7 +35,7 @@ class ProductoController extends BaseController{
             [
                 'nombre'       => [ 'required'   => 'El nombre es obligatorio',
                                     'min_length' => 'El nombre debe tener al menos 5 caracteres',
-                                    'max_length' => 'El nombre no debe superar los 20 caracteres'],
+                                    'max_length' => 'El nombre no debe superar los 35 caracteres'],
                 'descripcion'  => [ 'required'   => 'La descripción es obligatoria',
                                     'min_length' => 'La descripción debe teber al menos 5 caracteres',
                                     'max_length' => 'La descripción no debe superar los 50 caracteres'],
@@ -140,7 +140,7 @@ class ProductoController extends BaseController{
 
         $validation->setRules(
             [
-                'nombre'      => 'required|min_length[5]|max_length[20]',
+                'nombre'      => 'required|min_length[5]|max_length[35]',
                 'descripcion' => 'required|min_length[5]|max_length[50]',
                 'imagen' => 'uploaded[imagen]|max_size[imagen,4060]|is_image[imagen]',
                 'categoria'   => 'required|is_not_unique[categoria.id_categoria]',
@@ -151,7 +151,7 @@ class ProductoController extends BaseController{
                 'nombre' => [
                     'required'   => 'El nombre es obligatorio',
                     'min_length' => 'El nombre debe tener al menos 5 caracteres',
-                    'max_length' => 'El nombre no debe superar los 20 caracteres'
+                    'max_length' => 'El nombre no debe superar los 35 caracteres'
                 ],
                 'descripcion' => [
                     'required'   => 'La descripción es obligatoria',
