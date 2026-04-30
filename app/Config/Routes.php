@@ -44,11 +44,12 @@ $routes->get('usuario/getLocalidadesPorProvincia/(:num)', 'UsuarioController::ge
 
 /* --- PRODUCTOS --- */
 $routes->get('catalogo', 'ProductoController::mostrarCatalogo'); //muestra vista catálogo
-$routes->get('cargarProducto', 'ProductoController::formularioCargarProducto', ['filter' => 'roladmin']); //registra producto
-$routes->post('cargarProducto', 'ProductoController::cargarProducto', ['filter' => 'roladmin']); // muestra vista cargar producto
-$routes->get('gestionarProducto', 'ProductoController::gestionarProducto', ['filter' => 'roladmin']); //muestra vista gestionar producto
-$routes->get('editarProducto/(:num)', 'ProductoController::editarProducto/$1', ['filter' => 'roladmin']);
-$routes->post('actualizar', 'ProductoController::actualizarProducto', ['filter' => 'roladmin']);
+$routes->match(['get', 'post'],'cargarProducto', 'ProductoController::formularioCargarProducto', ['filter' => 'roladmin']); //registra producto
+/*
+$routes->post('cargarProducto', 'ProductoController::cargarProducto', ['filter' => 'roladmin']); // muestra vista cargar producto */
+$routes->get('gestionarProductos', 'ProductoController::gestionarProductos', ['filter' => 'roladmin']); //muestra vista gestionar producto
+$routes->match(['get', 'post'], 'formularioEditarProducto/(:num)', 'ProductoController::formularioEditarProducto/$1', ['filter' => 'roladmin']);
+$routes->post('actualizarProducto', 'ProductoController::actualizarProducto', ['filter' => 'roladmin']);
 $routes->get('eliminarProducto/(:num)', 'ProductoController::eliminarProducto/$1', ['filter' => 'roladmin']);
 $routes->get('activarProducto/(:num)', 'ProductoController::activarProducto/$1', ['filter' => 'roladmin']);
 

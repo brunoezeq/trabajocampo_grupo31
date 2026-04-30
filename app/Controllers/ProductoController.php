@@ -7,84 +7,119 @@ use App\Models\categoria_model;
 class ProductoController extends BaseController{
 
 
-    public function formularioCargarProducto(){
-        $categoria = new categoria_model(); 
-        $data['categoria'] = $categoria->obtenerCategorias();
-        $data['titulo'] = 'Cargar Producto';
+public function formularioCargarProducto()
+{
+    $request = \Config\Services::request();
+    $data['titulo'] = 'Cargar Producto';
+    $data['errores'] = null; // Inicializamos sin errores
 
-
+    // Detectamos si hubo un envío del formulario por POST
+    if ($request->getMethod() === 'POST') {
         
-        return view('front/header_admin', $data)
-               .view('backend/cargarProducto', $data)
-               . view('front/footer_admin'); 
-    }
-    
-    public function cargarProducto(){
-        $validation = \Config\Services::validation();
-        $request = \Config\Services::request();
-        
-        $validation->setRules(
-            ['nombre'   => 'required|min_length[5]|max_length[20]',
-             'descripcion' => 'required|min_length[5]|max_length[50]',
-             'categoria'   =>  'required|is_not_unique[categoria.id_categoria]',
-             'imagen' => 'uploaded[imagen]|max_size[imagen,4060]|is_image[imagen]',
-             'precio' => 'required|min_length[1]|max_length[10]',
-             'stock' => 'required|min_length[1]|max_length[10]'
+        $nombre      = $request->getPost('nombre');
+        $descripcion = $request->getPost('descripcion');
+        $categoria   = $request->getPost('categoria');
+        $imagen      = $request->getFile('imagen');
+        $precio      = $request->getPost('precio');
+        $stock       = $request->getPost('stock');
 
-        ],
-            [
-                'nombre'       => [ 'required'   => 'El nombre es obligatorio',
-                                    'min_length' => 'El nombre debe tener al menos 5 caracteres',
-                                    'max_length' => 'El nombre no debe superar los 20 caracteres'],
-                'descripcion'  => [ 'required'   => 'La descripción es obligatoria',
-                                    'min_length' => 'La descripción debe teber al menos 5 caracteres',
-                                    'max_length' => 'La descripción no debe superar los 50 caracteres'],
-                'categoria'    => [ 'required'   => 'La categoría es obligatoria',
-                                    'is_not_unique'=> 'La categoría seleccionada no es válida'],
-                'imagen'       => [ 'uploaded' => 'Debe seleccionar una imagen',
-                                    'is_image' => 'Debe ser una imagen valida'], 
-                'precio'       => [ 'required'   => 'El precio es obligatorio',
-                                    'min_length' => 'El precio debe tener al menos 1 dígito',
-                                    'max_length' => 'El precio no debe superar los 10 dígitos'],
-                'stock'        => [ 'required'   => 'El stock es obligatorio',
-                                    'min_length' => 'El stock debe tener al menos 1 dígito',
-                                    'max_length' => 'El stock no debe superar los 10 dígitos'],
-            ]
-        );
+        // Si se envío el formulario, validamos los datos del producto
+        $erroresDetectados = $this->validarProducto($nombre, $descripcion, $categoria, $imagen, $precio, $stock);
 
-        if($validation->withRequest($request)->run()){
-            $img = $this->request->getFile('imagen');
-            $nombre_aleatorio = $img->getRandomName();
-            $img->move(ROOTPATH.'public/assets/img', $nombre_aleatorio); 
-            $data = [
-                'nombre_producto' => $request->getPost('nombre'),
-                'descripcion_producto' => $request->getPost('descripcion'),
-                'categoria_producto' => $request->getPost('categoria'),
-                'imagen_producto' => $nombre_aleatorio,
-                'precio_producto' => $request->getPost('precio'),
-                'stock_producto' => $request->getPost('stock'),
-                'estado_producto' => 1
-            ];
+        if (empty($erroresDetectados)) {
+            // Si no hay errores de validación, cargamos el Producto y mostramos mensaje de éxito
 
-            $producto = new producto_model();
-            $producto->insert($data);
-            return redirect()->to('/cargarProducto')->with('mensaje', 'Producto cargado con éxito!');
- 
-
-        }else{
-            $categoria = new categoria_model();
-            $data['validation'] = $validation->getErrors();
-            $data['categoria'] = $categoria->findAll();
-            $data['titulo'] = 'Cargar Producto';
-
-            return view('front/header_admin', $data)
-                   .view('backend/cargarProducto', $data)
-                   . view('front/footer_admin');
+             $this->cargarProducto($nombre, $descripcion, $categoria, $imagen, $precio, $stock);
+             redirect()->to(base_url('formularioCargarProducto'))->with('mensaje', 'Producto cargado con éxito');
+        } else {
+            // Si hay errrores de validación, los mostramos en la vista
+            $data['errores'] = $erroresDetectados;
         }
-
     }
 
-    public function gestionarProducto(){
+    //Obtenemos las categorías para mostrar en el formulario
+    $categoriaModel = new categoria_model();
+    $data['categoria'] = $categoriaModel->obtenerCategorias();
+
+    return view('front/header_admin', $data)
+           .view('backend/cargarProducto', $data)
+           .view('front/footer_admin');
+}
+  public function cargarProducto($nombre, $descripcion, $id_categoria, $imagen, $precio, $stock) 
+{
+    $nombre_aleatorio = $imagen->getRandomName();
+    $imagen->move(ROOTPATH . 'public/assets/img', $nombre_aleatorio);
+
+    $data = [
+        'nombre_producto'      => $nombre,
+        'descripcion_producto' => $descripcion,
+        'categoria_producto'   => $id_categoria,
+        'imagen_producto'      => $nombre_aleatorio,
+        'precio_producto'      => $precio,
+        'stock_producto'       => $stock,
+        'estado_producto'      => 1
+    ];
+
+    $productoModel = new producto_model();
+    $productoModel->insert($data);
+}
+
+    private function validarProducto($nombre, $descripcion, $id_categoria, $imagen, $precio, $stock)
+{
+    $validador = \Config\Services::validation();
+
+    $datosParaValidar = [
+        'nombre'      => $nombre,
+        'descripcion' => $descripcion,
+        'categoria'   => $id_categoria,
+        //'imagen'      => $imagen,
+        'precio'      => $precio,
+        'stock'       => $stock
+    ];
+
+    $reglas = [
+        'nombre'      => 'required|min_length[5]|max_length[20]',
+        'descripcion' => 'required|min_length[5]|max_length[50]',
+        'categoria'   => 'required|is_not_unique[categoria.id_categoria]',
+        'imagen'      => 'uploaded[imagen]|max_size[imagen,4060]|is_image[imagen]',
+        'precio'      => 'required|numeric',
+        'stock'       => 'required|numeric'
+    ];
+
+    $mensajes = [
+        'nombre' => [
+            'required'   => 'El nombre es obligatorio',
+            'min_length' => 'El nombre debe tener al menos 5 caracteres',
+            'max_length' => 'El nombre no debe superar los 20 caracteres'
+        ],
+        'descripcion' => [
+            'required'   => 'La descripción es obligatoria',
+            'min_length' => 'La descripción debe tener al menos 5 caracteres'
+        ],
+        'imagen' => [
+            'uploaded' => 'Debe seleccionar una imagen',
+            'is_image' => 'El archivo debe ser una imagen válida'
+        ],
+        'categoria' => [
+            'required'      => 'La categoría es obligatoria',
+            'is_not_unique' => 'La categoría seleccionada no es válida'
+        ],
+        'precio' => ['required' => 'El precio es obligatorio', 'numeric' => 'El precio debe ser un número'],
+        'stock'  => ['required' => 'El stock es obligatorio', 'numeric' => 'El stock debe ser un número']
+    ];
+
+    $validador->setRules($reglas, $mensajes);
+
+    if ($validador->run($datosParaValidar)) {
+        // Si la validación es exitosa, devolvemos un array vacio
+        return [];
+    } else {
+       // Si la validación falla, retornamos los errores
+        return $validador->getErrors();
+    }
+}
+
+    public function gestionarProductos(){
 
         $producto = new producto_model();
         $categoria = new categoria_model();
@@ -106,114 +141,90 @@ class ProductoController extends BaseController{
         $data['titulo'] = 'Gestionar Producto';
 
         return view('front/header_admin', $data)
-            . view('backend/gestionarProducto', $data)
+            . view('backend/gestionarProductos', $data)
             . view('front/footer_admin');
     }
 
 
-    public function editarProducto($id = null){
-
-        if ($id === null) {
-            throw new \CodeIgniter\Exceptions\PageNotFoundException('ID de producto no proporcionado');
-        }
-
-        $producto = new producto_model();
-        $categoria = new categoria_model();
-
-        $data['categoria'] = $categoria->obtenerCategorias();
-        $data['producto'] = $producto->where('id_producto', $id)->first();
-        $data['titulo'] = 'Editar Producto'; 
-
-        if (!$data['producto']) {
-        throw new \CodeIgniter\Exceptions\PageNotFoundException('Producto no encontrado');
-        }
-
-        return view('front/header_admin', $data)
-              .view('backend/editarProducto', $data)
-              . view('front/footer_admin');
+    public function formularioEditarProducto($id = null)
+{
+    if ($id === null) {
+       return redirect()->to(base_url('gestionarProductos'))->with('mensaje', 'Error: ID de producto no proporcionado.');
     }
 
-    public function actualizarProducto(){
+    $request = \Config\Services::request();
+    $productoModel = new producto_model();
+    $categoriaModel = new categoria_model();
 
-        $validation = \Config\Services::validation();
-        $request = \Config\Services::request();
+    $data['titulo'] = 'Editar Producto';
+    $data['errores'] = []; // Inicializamos sin errores
 
-        $validation->setRules(
-            [
-                'nombre'      => 'required|min_length[5]|max_length[20]',
-                'descripcion' => 'required|min_length[5]|max_length[50]',
-                'imagen' => 'uploaded[imagen]|max_size[imagen,4060]|is_image[imagen]',
-                'categoria'   => 'required|is_not_unique[categoria.id_categoria]',
-                'precio'      => 'required|min_length[1]|max_length[10]',
-                'stock'       => 'required|min_length[1]|max_length[10]'
-            ],
-            [
-                'nombre' => [
-                    'required'   => 'El nombre es obligatorio',
-                    'min_length' => 'El nombre debe tener al menos 5 caracteres',
-                    'max_length' => 'El nombre no debe superar los 20 caracteres'
-                ],
-                'descripcion' => [
-                    'required'   => 'La descripción es obligatoria',
-                    'min_length' => 'La descripción debe tener al menos 5 caracteres',
-                    'max_length' => 'La descripción no debe superar los 50 caracteres'
-                ],
-                'imagen' => 
-                [   'uploaded' => 'Debe seleccionar una imagen',
-                    'is_image' => 'Debe ser una imagen valida'
-                ], 
-                'categoria' => [
-                    'required'     => 'La categoría es obligatoria',
-                    'is_not_unique'=> 'La categoría seleccionada no es válida'
-                ],
-                'precio' => [
-                    'required'   => 'El precio es obligatorio',
-                    'min_length' => 'El precio debe tener al menos 1 dígito',
-                    'max_length' => 'El precio no debe superar los 10 dígitos'
-                ],
-                'stock' => [
-                    'required'   => 'El stock es obligatorio',
-                    'min_length' => 'El stock debe tener al menos 1 dígito',
-                    'max_length' => 'El stock no debe superar los 10 dígitos'
-                ]
-            ]
-        );
+    // Detectamos si el usuario envió el formulario por POST
+    if ($request->getMethod() === 'POST') {
+        //Obtenemos datos del producto
+        $nombre      = $request->getPost('nombre');
+        $descripcion = $request->getPost('descripcion');
+        $categoria   = $request->getPost('categoria');
+        $imagen      = $request->getFile('imagen');
+        $precio      = $request->getPost('precio');
+        $stock       = $request->getPost('stock');
 
-    
-        if ($validation->withRequest($request)->run()){
-            
-            $imagen = $request->getFile('imagen');
-            $nombre_aleatorio = $imagen->getRandomName();
-            $imagen->move(ROOTPATH.'public/assets/img', $nombre_aleatorio); 
+        // Validamos los datos del producto
+        $data['errores'] = $this->validarProducto($nombre, $descripcion, $categoria, $imagen, $precio, $stock);
 
-            $id = $request->getPost('id');
-
-            $data = [
-                'nombre_producto'      => $request->getPost('nombre'),
-                'descripcion_producto' => $request->getPost('descripcion'),
-                'imagen_producto' => $nombre_aleatorio,
-                'categoria_producto'   => $request->getPost('categoria'),
-                'precio_producto'      => $request->getPost('precio'),
-                'stock_producto'       => $request->getPost('stock')
-            ];
-
-            $producto = new producto_model();
-            $producto->update($id, $data);
-
-            return redirect()->to(base_url('gestionarProducto'))->with('mensaje', 'Producto actualizado con éxito!');
-        } else {
-            return redirect()->back()
-                            ->withInput()
-                            ->with('errors', $validation->getErrors());
+        if (empty($data['errores'])) {
+            // Si no hay errores, actualizamos los datos del producto
+             $this->actualizarProducto($id, $nombre, $descripcion, $categoria, $imagen, $precio, $stock);
+            // Mostramos mensaje de éxito en el listado de productos.
+             return redirect()->to(base_url('gestionarProductos'))->with('mensaje', 'Producto actualizado con éxito');
         }
+        
+        //Si hay errores de validación, los mostramos en el listado de productos
+        return redirect()->to(base_url('gestionarProductos'))
+                             ->withInput() 
+                             ->with('mensaje', 'Hubo errores en la actualización.')
+                             ->with('errores', $data['errores']); 
     }
+
+    // Preparamos datos para la vista
+    $data['producto'] = $productoModel->find($id);
+    $data['categoria'] = $categoriaModel->obtenerCategorias();
+
+    //Si no se encuentra un producto, mostar el error correspondiente
+    if (!$data['producto']) {
+        return redirect()->to(base_url('gestionarProductos'))->with('mensaje', 'El producto solicitado no existe.');
+    }
+
+    return view('front/header_admin', $data)
+           .view('backend/editarProducto', $data)
+           .view('front/footer_admin');
+}
+
+    public function actualizarProducto($id_producto, $nombre, $descripcion, $id_categoria, $imagen, $precio, $stock)
+{
+    $productoModel = new producto_model();
+
+    $nombre_aleatorio = $imagen->getRandomName();
+    $imagen->move(ROOTPATH . 'public/assets/img', $nombre_aleatorio);
+
+    $data = [
+        'nombre_producto'      => $nombre,
+        'descripcion_producto' => $descripcion,
+        'categoria_producto'   => $id_categoria,
+        'imagen_producto'      => $nombre_aleatorio,
+        'precio_producto'      => $precio,
+        'stock_producto'       => $stock
+    ];
+
+    $productoModel->update($id_producto, $data);
+}
 
 
     public function eliminarProducto($id){
         $data = ['estado_producto' => 0]; 
         $producto = new producto_model();
         $producto->update($id, $data);
-        return redirect()->route('gestionarProducto')->with('mensaje', 'Producto eliminado con éxito');
+        return redirect()->route('gestionarProductos')->with('mensaje', 'Producto eliminado con éxito');
 
     }
 
@@ -221,7 +232,7 @@ class ProductoController extends BaseController{
         $data = ['estado_producto' => 1];
         $producto = new producto_model();
         $producto->update($id, $data);
-        return redirect()->route('gestionarProducto')->with('mensaje', 'Producto activado con éxito');
+        return redirect()->route('gestionarProductos')->with('mensaje', 'Producto activado con éxito');
  
     }
 

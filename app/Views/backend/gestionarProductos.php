@@ -8,7 +8,19 @@
         </div>
     <?php endif; ?>
 
-    <form method="get" action="<?= base_url('gestionarProducto') ?>" class="mb-3">
+    <!-- Comprobar si existe la sesión de errores -->
+<?php if (session()->getFlashdata('errores')) : ?>
+    <div class="alert alert-danger alert-dismissible fade show" role="alert">
+        <ul>
+            <?php foreach (session()->getFlashdata('errores') as $error) : ?>
+                <li><?= esc($error) ?></li>
+            <?php endforeach ?>
+        </ul>
+        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+    </div>
+<?php endif; ?>
+
+    <form method="get" action="<?= base_url('gestionarProductos') ?>" class="mb-3">
         <div class="input-group">
             <input type="text" name="busqueda" class="form-control" placeholder="Buscar por nombre..." value="<?= esc($busqueda ?? '') ?>">
             <button class="btn btn-primary" type="submit">Buscar</button>
@@ -43,7 +55,7 @@
                             <td class="text-center">$<?= esc($row['precio_producto'] ?? '') ?></td>
                             <td class="text-center"><?= esc($row['stock_producto'] ?? '') ?></td>
                             <td class="text-center">
-                                <a class="btn btn-success btn-sm" href="<?= base_url('editarProducto/'.$row['id_producto']); ?>">
+                                <a class="btn btn-success btn-sm" href="<?=base_url('formularioEditarProducto/'.$row['id_producto']); ?>">
                                     <i class="bi bi-pencil-square"></i> Editar
                                 </a>
                             </td>
