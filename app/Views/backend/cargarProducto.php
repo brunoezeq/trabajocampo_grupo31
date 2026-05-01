@@ -7,14 +7,14 @@
                 <div class="card-body">
 
                     
-                    <?php if (!empty($validation)) : ?>
-                        <div class="alert alert-danger">
-                            <ul class="mb-0">
-                                <?php foreach ($validation as $error): ?>
-                                    <li><?= esc($error) ?></li>
-                                <?php endforeach ?>
+                       <?php if (!empty($errores)) : ?>
+                                <div class="alert alert-danger">
+                                  <ul class="mb-0">
+                                  <?php foreach ($errores as $error): ?>
+                                 <li><?= esc($error) ?></li>
+                         <?php endforeach ?>
                             </ul>
-                        </div>
+                          </div>
                     <?php endif ?>
 
                     <?php if (session('mensaje')): ?>
