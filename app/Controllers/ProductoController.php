@@ -7,82 +7,45 @@ use App\Models\categoria_model;
 class ProductoController extends BaseController{
 
 
-    public function formularioCargarProducto(){
-        $categoria = new categoria_model(); 
-        $data['categoria'] = $categoria->obtenerCategorias();
-        $data['titulo'] = 'Cargar Producto';
-
-
-        
-        return view('front/header_admin', $data)
-               .view('backend/cargarProducto', $data)
-               . view('front/footer_admin'); 
-    }
+  public function mostrarFormularioCarga() {
+     //Servicio de categorias
+    $categoriaService = new \App\Services\CategoriaService();
     
-    public function cargarProducto(){
-        $validation = \Config\Services::validation();
-        $request = \Config\Services::request();
-        
-        $validation->setRules(
-            ['nombre'   => 'required|min_length[5]|max_length[20]',
-             'descripcion' => 'required|min_length[5]|max_length[50]',
-             'categoria'   =>  'required|is_not_unique[categoria.id_categoria]',
-             'imagen' => 'uploaded[imagen]|max_size[imagen,4060]|is_image[imagen]',
-             'precio' => 'required|min_length[1]|max_length[10]',
-             'stock' => 'required|min_length[1]|max_length[10]'
+    $data = [
+        'titulo'     => 'Cargar Producto',
+        // Llamada al servicio para obtener todas las categorías
+        'categoria'  => $categoriaService->obtenerTodas() 
+    ];
+    
+    return view('front/header_admin', $data)
+         . view('backend/cargarProducto', $data)
+         . view('front/footer_admin');
+}
 
-        ],
-            [
-                'nombre'       => [ 'required'   => 'El nombre es obligatorio',
-                                    'min_length' => 'El nombre debe tener al menos 5 caracteres',
-                                    'max_length' => 'El nombre no debe superar los 20 caracteres'],
-                'descripcion'  => [ 'required'   => 'La descripción es obligatoria',
-                                    'min_length' => 'La descripción debe teber al menos 5 caracteres',
-                                    'max_length' => 'La descripción no debe superar los 50 caracteres'],
-                'categoria'    => [ 'required'   => 'La categoría es obligatoria',
-                                    'is_not_unique'=> 'La categoría seleccionada no es válida'],
-                'imagen'       => [ 'uploaded' => 'Debe seleccionar una imagen',
-                                    'is_image' => 'Debe ser una imagen valida'], 
-                'precio'       => [ 'required'   => 'El precio es obligatorio',
-                                    'min_length' => 'El precio debe tener al menos 1 dígito',
-                                    'max_length' => 'El precio no debe superar los 10 dígitos'],
-                'stock'        => [ 'required'   => 'El stock es obligatorio',
-                                    'min_length' => 'El stock debe tener al menos 1 dígito',
-                                    'max_length' => 'El stock no debe superar los 10 dígitos'],
-            ]
-        );
+public function registrarProducto() {
+    //Servicio de productos
+    $productoService = new \App\Services\ProductoService();
+    $request = \Config\Services::request();
+    
+    $datos = $request->getPost();
+    $imagen = $request->getFile('imagen');
 
-        if($validation->withRequest($request)->run()){
-            $img = $this->request->getFile('imagen');
-            $nombre_aleatorio = $img->getRandomName();
-            $img->move(ROOTPATH.'public/assets/img', $nombre_aleatorio); 
-            $data = [
-                'nombre_producto' => $request->getPost('nombre'),
-                'descripcion_producto' => $request->getPost('descripcion'),
-                'categoria_producto' => $request->getPost('categoria'),
-                'imagen_producto' => $nombre_aleatorio,
-                'precio_producto' => $request->getPost('precio'),
-                'stock_producto' => $request->getPost('stock'),
-                'estado_producto' => 1
-            ];
+    //Llamada al servicio para validar los datos del producto
+    $errores = $productoService->validarDatos($datos, $imagen);
 
-            $producto = new producto_model();
-            $producto->insert($data);
-            return redirect()->to('/cargarProducto')->with('mensaje', 'Producto cargado con éxito!');
- 
-
-        }else{
-            $categoria = new categoria_model();
-            $data['validation'] = $validation->getErrors();
-            $data['categoria'] = $categoria->findAll();
-            $data['titulo'] = 'Cargar Producto';
-
-            return view('front/header_admin', $data)
-                   .view('backend/cargarProducto', $data)
-                   . view('front/footer_admin');
-        }
-
+    if (!empty($errores)) {
+        return redirect()->back()->withInput()->with('errores', $errores);
     }
+    //Si no hay errores de validación, se llama al servicio para insertar el producto
+    $resultado = $productoService->insertar($datos, $imagen);
+
+    if ($resultado === false) {
+        //Si no se pudo insertar el producto, se muestra el error correspondiente
+        return redirect()->back()->withInput()->with('error', 'Hubo un problema técnico y no se pudo guardar el producto.');
+    }
+    //Si el producto se insertó correctamente, se redirige con un mensaje de éxito
+     return redirect()->back()->with('mensaje', 'Guardado con éxito');
+}
 
     public function gestionarProducto(){
 
