@@ -1,3 +1,12 @@
+<!-- Mensaje de Bienvenida / Éxito Delgado -->
+<?php if (session('mensaje')): ?>
+    <div class="alert alert-success shadow-sm" style="border-radius: 4px; border-left: 4px solid #28a745; background-color: #f4faf6; padding: 0.5rem 1rem; margin-bottom: 1rem;">
+        <span style="color: #155724; font-size: 0.95rem; font-weight: 600;">
+            <?= esc(session('mensaje')); ?>
+        </span>
+    </div>
+<?php endif; ?>
+
 <!-- Banner bienvenida -->
 <div class="banner">
     <img src="assets/img/banner.png" alt="banner bienvenida">

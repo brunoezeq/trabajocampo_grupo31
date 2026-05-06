@@ -15,10 +15,18 @@
         </div>
         <?php endif ?>
 
-   <?php if(session('mensaje')): ?>
-    <h3 class="text-white display-6 font-weight-bold">
-        <?= session('mensaje'); ?>
-    </h3>
+ <?php if (session('errores')): ?>
+    <div class="alert alert-light shadow-sm mb-4" style="border-radius: 8px; border-left: 6px solid #dc3545; background-color: #f8f9fa;">
+        <div class="p-3">
+            <ul class="mb-0" style="list-style-type: disc; padding-left: 25px;">
+                <?php foreach (session('errores') as $error): ?>
+                    <li class="mb-1" style="color: #c82333; font-weight: 500;">
+                        <?= esc($error); ?>
+                    </li>
+                <?php endforeach; ?>
+            </ul>
+        </div>
+    </div>
 <?php endif; ?>
 
         <?php echo form_open('verificarUsuario') ?>

@@ -51,7 +51,7 @@ public function registrarProducto() {
         //Si no se pudo insertar el producto, se muestra el error correspondiente
         return redirect()->back()->withInput()->with('errores', 'No se pudo cargar el producto.');
     }
-    //Si el producto se insertó correctamente, se redirige con un mensaje de éxito
+    //Si el producto se insertó correctamente, se redirige al listado de productos con un mensaje de éxito
      return redirect()->back()->with('mensaje', 'Guardado con éxito');
 }
 
@@ -91,8 +91,8 @@ public function editarProducto($id = null) {
         return redirect()->back()->withInput()->with('errores', 'Hubo un problema técnico y no se pudo editar el producto.');
     }
 
-    //Si el producto se editó correctamente, se redirige con un mensaje de éxito
-     return redirect()->back()->with('mensaje', 'Producto editado con éxito');
+    //Si el producto se editó correctamente, se redirige al listado de productos con un mensaje de éxito
+    return redirect()->route('gestionarProductos')->with('mensaje', 'Producto editado con éxito');
 
 }
 

@@ -34,12 +34,12 @@ $routes->get('terminos_y_usos', 'Home::terminos');
 $routes->get('quienes_somos', 'Home::somos'); 
 
 /* --- USUARIO --- */
-$routes->get('registro', 'UsuarioController::registro');  //muestra vista de registro
-$routes->get('login', 'UsuarioController::login');        // muestra vista para iniciar sesión
+$routes->get('registro', 'UsuarioController::mostrarRegistro');  //muestra vista de registro
+$routes->get('login', 'UsuarioController::mostrarLogin');        // muestra vista para iniciar sesión
 $routes->post('registro', 'UsuarioController::registrarUsuario'); //registrar usuario
 $routes->post('verificarUsuario', 'UsuarioController::iniciarSesion'); 
 $routes->get('logout', 'UsuarioController::cerrarSesion'); 
-$routes->get('user_admin', 'UsuarioController::admin', ['filter' => 'roladmin']); 
+$routes->get('user_admin', 'UsuarioController::mostrarPanelAdministrador', ['filter' => 'roladmin']); 
 $routes->get('usuario/getLocalidadesPorProvincia/(:num)', 'UsuarioController::getLocalidadesPorProvincia/$1');// ruta para obtener localidades por provincia (registro)
 
 /* --- PRODUCTOS --- */

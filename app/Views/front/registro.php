@@ -4,11 +4,19 @@
                 <h2>Unite a nuestra comunidad</h2>
 
                 
-   <?php if(session('error')): ?>
-    <h3 class="text-white display-6 font-weight-bold">
-        <?= session('error'); ?>
-    </h3>
-    <?php endif; ?>
+<?php if (session('errores')): ?>
+    <div class="alert alert-light shadow-sm mb-4" style="border-radius: 8px; border-left: 6px solid #dc3545; background-color: #f8f9fa;">
+        <div class="p-3">
+            <ul class="mb-0" style="list-style-type: disc; padding-left: 25px;">
+                <?php foreach (session('errores') as $error): ?>
+                    <li class="mb-1" style="color: #c82333; font-weight: 500;">
+                        <?= esc($error); ?>
+                    </li>
+                <?php endforeach; ?>
+            </ul>
+        </div>
+    </div>
+<?php endif; ?>
 
                 <?php if(!empty($validation)): ?>
                 <div class="alert alert-danger" role="alert">
@@ -91,19 +99,6 @@
     </select>
 </div>
 
-                <!--
-                <div class="mb-3">
-                    <label class="form-label">Localidad*</label>
-                    <select name="localidad_id" id="localidad_id" class="form-control">
-                        <option value=""></option>
-                        <?php foreach($localidades as $loc): ?>
-                            <option value="<?= $loc['id_localidad']; ?>" <?= set_select('localidad_id', $loc['id_localidad']); ?>>
-                                <?= $loc['nombre_localidad']; ?>
-                            </option>
-                        <?php endforeach; ?>
-                    </select>
-                </div>
-                -->
                 <hr>
                 <div class="mb-3">
                     <label class="form-label">Usuario*</label>
@@ -131,15 +126,37 @@
 $(document).ready(function() {
     $('#provincia_id').change(function() {
         var provinciaId = $(this).val();
+        var $selectLocalidad = $('#localidad_id');
+
         if(provinciaId != '') {
             $.ajax({
                 url: "<?= base_url('usuario/getLocalidadesPorProvincia') ?>/" + provinciaId,
                 method: "GET",
-                success: function(data) {
-                    $('#localidad_id').html(data);
-                    $('#localidad_id').prop('disabled', false);
+                dataType: "json", // Indicamos que esperamos un JSON
+                success: function(localidades) {
+                    // Limpiamos el select y agregamos la opción por defecto
+                    $selectLocalidad.empty();
+                    $selectLocalidad.append('<option value="">Seleccione una localidad</option>');
+
+                    // Iteramos sobre el array de objetos recibido
+                    $.each(localidades, function(index, loc) {
+                        $selectLocalidad.append(
+                            $('<option>', {
+                                value: loc.id_localidad,
+                                text: loc.nombre_localidad
+                            })
+                        );
+                    });
+
+                    $selectLocalidad.prop('disabled', false);
+                },
+                error: function() {
+                    alert('Error al obtener los datos del servidor');
                 }
             });
+        } else {
+            $selectLocalidad.html('<option value="">Primero seleccione una provincia</option>');
+            $selectLocalidad.prop('disabled', true);
         }
     });
 });
