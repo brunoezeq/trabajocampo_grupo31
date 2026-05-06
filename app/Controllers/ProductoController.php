@@ -49,9 +49,6 @@ public function registrarProducto() {
 }
 
   public function mostrarFormularioEditar($id = null) {
-        if ($id === null) {
-     return redirect()->back()->with('mensaje', 'Producto no encontrado');
-      }
     //Servicio de productos
     $productoService = new \App\Services\ProductoService();
      //Servicio de categorias
@@ -64,7 +61,11 @@ public function registrarProducto() {
         // Llamada al servicio para obtener todas las categorías
         'categoria'  => $categoriaService->obtenerTodas(),
     ];
-    
+    if(data['producto'] == null){
+        //Si no se encuentra el producto, se muestra el error correspondiente 
+            return redirect()->back()->with('mensaje', 'No se encontro el producto solicitado');
+    }
+
     return view('front/header_admin', $data)
          . view('backend/editarProducto', $data)
          . view('front/footer_admin');
