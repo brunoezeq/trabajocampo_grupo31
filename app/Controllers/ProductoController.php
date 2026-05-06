@@ -99,6 +99,20 @@ public function editarProducto($id = null) {
 
 }
 
+ public function cambiarEstadoProducto($id, $estado)
+    {
+        $productoService = new \App\Services\ProductoService();
+        $productoModel = new producto_model();
+
+        $productoService->cambiarEstado($id, $estado);
+
+        $mensaje = $estado == 1 
+            ? 'Producto activado con éxito' 
+            : 'Producto desactivado con éxito';
+
+        return redirect()->back()->with('mensaje', $mensaje);
+    }
+
 
     public function gestionarProductos(){
 

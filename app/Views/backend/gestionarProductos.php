@@ -60,15 +60,17 @@
                                 </a>
                             </td>
                             <td class="text-center">
-                                <?php if (($row['estado_producto'] ?? 0) == 1): ?>
-                                    <a href="<?= base_url('eliminarProducto/'.$row['id_producto']) ?>" class="btn btn-danger btn-sm">
-                                        <i class="bi bi-trash"></i> Eliminar
-                                    </a>
-                                <?php else: ?>
-                                    <a href="<?= base_url('activarProducto/'.$row['id_producto']) ?>" class="btn btn-primary btn-sm">
-                                        <i class="bi bi-check-circle"></i> Activar
-                                    </a>
-                                <?php endif; ?>
+                              <?php if (($row['estado_producto'] ?? 0) == 1): ?>
+    <!-- Si está activo (1), pasamos 0 para desactivarlo -->
+    <a href="<?= base_url('cambiarEstadoProducto/'.$row['id_producto'].'/0') ?>" class="btn btn-danger btn-sm">
+        <i class="bi bi-trash"></i> Eliminar
+    </a>
+<?php else: ?>
+    <!-- Si está inactivo (0), pasamos 1 para activarlo -->
+    <a href="<?= base_url('cambiarEstadoProducto/'.$row['id_producto'].'/1') ?>" class="btn btn-primary btn-sm">
+        <i class="bi bi-check-circle"></i> Activar
+    </a>
+<?php endif; ?>
                             </td>
                         </tr>
                     <?php endforeach; ?>

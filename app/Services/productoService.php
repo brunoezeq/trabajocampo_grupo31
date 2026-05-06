@@ -104,4 +104,16 @@ class ProductoService {
         return $this->model->update($id, ['estado_producto' => 0]);
     }
 
+    public function cambiarEstado($id, $estado) {
+   //Comprueba que el estado actual sea 0 o 1
+    if ($estado == 0 || $estado == 1) {
+        $datos = [
+            'estado_producto' => $estado
+        ];
+
+        return $this->model->update($id, $datos);
+    }
+    return false;
+}
+
 }
