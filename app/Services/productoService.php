@@ -13,37 +13,37 @@ class ProductoService {
     public function validarDatos($datos, $imagen = null) {
         $errores = [];
 
-        // Validaci髇 de Nombre
+        // Validaci贸n de Nombre
         if (empty($datos['nombre'])) {
             $errores['nombre'] = 'El nombre es obligatorio';
         } elseif (strlen($datos['nombre']) < 5 || strlen($datos['nombre']) > 20) {
             $errores['nombre'] = 'El nombre debe tener entre 5 y 20 caracteres';
         }
 
-        // Validaci髇 de Descripci髇
+        // Validaci贸n de Descripci贸n
         if (empty($datos['descripcion'])) {
-            $errores['descripcion'] = 'La descripci髇 es obligatoria';
+            $errores['descripcion'] = 'La descripci贸n es obligatoria';
         } elseif (strlen($datos['descripcion']) < 5) {
-            $errores['descripcion'] = 'La descripci髇 debe tener al menos 5 caracteres';
+            $errores['descripcion'] = 'La descripci贸n debe tener al menos 5 caracteres';
         }
 
-        // Validaci髇 de Precio
+        // Validaci贸n de Precio
         if (!isset($datos['precio']) || !is_numeric($datos['precio'])) {
-            $errores['precio'] = 'El precio debe ser un n鷐ero';
+            $errores['precio'] = 'El precio debe ser un n煤mero';
         }
 
-        // Validaci髇 de Stock
+        // Validaci贸n de Stock
         if (!isset($datos['stock']) || !is_numeric($datos['stock'])) {
-            $errores['stock'] = 'El stock debe ser un n鷐ero';
+            $errores['stock'] = 'El stock debe ser un n煤mero';
         }
 
-        // Validaci髇 de Imagen (Solo si se proporciona el objeto de archivo)
+        // Validaci贸n de Imagen (Solo si se proporciona el objeto de archivo)
         // Validamos solo si hay un intento de carga o si es estrictamente necesario
         if ($imagen !== null) {
             if (!$imagen->isValid()) {
-                $errores['imagen'] = 'El archivo debe ser una imagen v醠ida';
+                $errores['imagen'] = 'El archivo debe ser una imagen v谩lida';
             } elseif ($imagen->getSizeByUnit('kb') > 4060) {
-                $errores['imagen'] = 'La imagen es demasiado pesada (m醲 4MB)';
+                $errores['imagen'] = 'La imagen es demasiado pesada (m谩x 4MB)';
             }
         }
         return $errores;
@@ -61,19 +61,38 @@ class ProductoService {
     ];
         if ($imagen && $imagen->isValid()) {
             $nombreImg = $imagen->getRandomName();
-            $imagen->move(ROOTPATH . 'public/uploads', $nombreImg);
-            $datos['imagen'] = $nombreImg;
+            $imagen->move(ROOTPATH . 'public/assets/img', $nombreImg);
+           $datosProducto['imagen_producto'] = $nombreImg;
         }
         return $this->model->insert($datosProducto);
     }
 
+    public function obtenerTodos($busqueda = null) {
+        if ($busqueda) {
+            return $this->model->like('nombre_producto', $busqueda)->findAll();
+        }
+        return $this->model->findAll();
+    }
+
+    public function obtenerPorId($id) {
+        return $this->model->find($id);
+    }
+
     public function actualizar($id, $datos, $imagen = null) {
+        $datosProducto = [
+        'nombre_producto'      => $datos['nombre'],
+        'descripcion_producto' => $datos['descripcion'],
+        'precio_producto'      => $datos['precio'],
+        'stock_producto'       => $datos['stock'],
+        'categoria_producto'   => $datos['categoria'],
+    ];
+
         if ($imagen && $imagen->isValid()) {
             $nombreImg = $imagen->getRandomName();
-            $imagen->move(ROOTPATH . 'public/uploads', $nombreImg);
-            $datos['imagen'] = $nombreImg;
+            $imagen->move(ROOTPATH . 'public/assets/img', $nombreImg);
+            $datosProducto['imagen_producto'] = $nombreImg;
         }
-        return $this->model->update($id, $datos);
+        return $this->model->update($id, $datosProducto);
     }
 
        public function eliminar($id) {

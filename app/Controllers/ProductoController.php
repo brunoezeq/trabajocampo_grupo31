@@ -26,7 +26,7 @@ public function registrarProducto() {
     //Servicio de productos
     $productoService = new \App\Services\ProductoService();
     $request = \Config\Services::request();
-    
+    //Recupera datos del formulario
     $datos = $request->getPost();
     $imagen = $request->getFile('imagen');
 
@@ -34,6 +34,7 @@ public function registrarProducto() {
     $errores = $productoService->validarDatos($datos, $imagen);
 
     if (!empty($errores)) {
+        //Si hay errores de validación, se los muestra al usuario
         return redirect()->back()->withInput()->with('errores', $errores);
     }
     //Si no hay errores de validación, se llama al servicio para insertar el producto
@@ -41,11 +42,62 @@ public function registrarProducto() {
 
     if ($resultado === false) {
         //Si no se pudo insertar el producto, se muestra el error correspondiente
-        return redirect()->back()->withInput()->with('error', 'Hubo un problema técnico y no se pudo guardar el producto.');
+        return redirect()->back()->withInput()->with('errores', 'Hubo un problema técnico y no se pudo guardar el producto.');
     }
     //Si el producto se insertó correctamente, se redirige con un mensaje de éxito
      return redirect()->back()->with('mensaje', 'Guardado con éxito');
 }
+
+  public function mostrarFormularioEditar($id = null) {
+        if ($id === null) {
+     return redirect()->back()->with('mensaje', 'Producto no encontrado');
+      }
+    //Servicio de productos
+    $productoService = new \App\Services\ProductoService();
+     //Servicio de categorias
+    $categoriaService = new \App\Services\CategoriaService();
+    
+    $data = [
+        'titulo'     => 'Editar Producto',
+        // Llamada al servicio producto para obtener los datos del producto a editar
+        'producto'   => $productoService->obtenerPorId($id),
+        // Llamada al servicio para obtener todas las categorías
+        'categoria'  => $categoriaService->obtenerTodas(),
+    ];
+    
+    return view('front/header_admin', $data)
+         . view('backend/editarProducto', $data)
+         . view('front/footer_admin');
+}
+
+public function editarProducto($id = null) {
+        $productoService = new \App\Services\ProductoService();
+        $request = \Config\Services::request();
+        //Recupera datos del formulario
+        $datos = $request->getPost();
+        $imagen = $request->getFile('imagen');
+
+        //Llamada al servicio para validar los datos del producto
+    $errores = $productoService->validarDatos($datos, $imagen);
+
+    if (!empty($errores)) {
+        //Si hay errores de validación, se los muestra al usuario
+        return redirect()->back()->withInput()->with('errores', $errores);
+    }
+
+     //Si no hay errores de validación, se llama al servicio para actualizar el producto
+    $resultado = $productoService->actualizar($id, $datos, $imagen);
+
+     if ($resultado === false) {
+        //Si no se pudo editar el producto, se muestra un error
+        return redirect()->back()->withInput()->with('errores', 'Hubo un problema técnico y no se pudo editar el producto.');
+    }
+
+    //Si el producto se editó correctamente, se redirige con un mensaje de éxito
+     return redirect()->back()->with('mensaje', 'Producto editado con éxito');
+
+}
+
 
     public function gestionarProductos(){
 
@@ -73,7 +125,7 @@ public function registrarProducto() {
             . view('front/footer_admin');
     }
 
-
+    /*
     public function formularioEditarProducto($id = null)
 {
     if ($id === null) {
@@ -127,7 +179,7 @@ public function registrarProducto() {
            .view('backend/editarProducto', $data)
            .view('front/footer_admin');
 }
-
+*/
     public function actualizarProducto($id_producto, $nombre, $descripcion, $id_categoria, $imagen, $precio, $stock)
 {
     $productoModel = new producto_model();

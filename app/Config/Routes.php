@@ -47,8 +47,8 @@ $routes->get('catalogo', 'ProductoController::mostrarCatalogo'); //muestra vista
 $routes->get('cargarProducto', 'ProductoController::mostrarFormularioCarga', ['filter' => 'roladmin']); // muestra vista cargar producto
 $routes->post('registrarProducto', 'ProductoController::registrarProducto', ['filter' => 'roladmin']); // procesa datos del formulario de carga de producto
 $routes->get('gestionarProductos', 'ProductoController::gestionarProductos', ['filter' => 'roladmin']); //muestra vista gestionar producto
-$routes->get('editarProducto/(:num)', 'ProductoController::editarProducto/$1', ['filter' => 'roladmin']);
-$routes->post('actualizar', 'ProductoController::actualizarProducto', ['filter' => 'roladmin']);
+$routes->get('editarProducto/(:num)', 'ProductoController::mostrarFormularioEditar/$1', ['filter' => 'roladmin']);
+$routes->post('editarProducto/(:num)', 'ProductoController::editarProducto/$1', ['filter' => 'roladmin']);
 $routes->get('eliminarProducto/(:num)', 'ProductoController::eliminarProducto/$1', ['filter' => 'roladmin']);
 $routes->get('activarProducto/(:num)', 'ProductoController::activarProducto/$1', ['filter' => 'roladmin']);
 

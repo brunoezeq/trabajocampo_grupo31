@@ -7,17 +7,25 @@
                 <div class="card-body">
  
                     
-                    <?php if (session('errors')): ?>
+                   <?php if (session('mensaje')): ?>
+                       <div class="alert alert-success">
+                            <ul class="mb-0">
+                                   <li><?= esc(session('mensaje')) ?></li>
+                            </ul>
+                        </div>
+                    <?php endif; ?>
+
+                    <?php if (session('errores')): ?>
                         <div class="alert alert-danger">
                             <ul class="mb-0">
-                                <?php foreach (session('errors') as $error): ?>
+                                <?php foreach (session('errores') as $error): ?>
                                     <li><?= esc($error) ?></li>
                                 <?php endforeach; ?>
                             </ul>
                         </div>
                     <?php endif; ?>
 
-                    <?= form_open_multipart(base_url('formularioEditarProducto/' . $producto['id_producto'])) ?>
+                    <?= form_open_multipart(base_url('editarProducto/' . $producto['id_producto'])) ?>
 
                     <div class="mb-3">
                         <label for="nombre" class="form-label text-black">Nombre del Producto</label>

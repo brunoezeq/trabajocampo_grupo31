@@ -7,15 +7,15 @@
                 <div class="card-body">
 
                     
-                       <?php if (!empty($errores)) : ?>
-                                <div class="alert alert-danger">
-                                  <ul class="mb-0">
-                                  <?php foreach ($errores as $error): ?>
+                          <?php if (session('errores')) : ?>
+                                 <div class="alert alert-danger">
+                                <ul class="mb-0">
+                            <?php foreach (session('errores') as $error): ?>
                                  <li><?= esc($error) ?></li>
-                         <?php endforeach ?>
-                            </ul>
-                          </div>
-                    <?php endif ?>
+                             <?php endforeach ?>
+                             </ul>
+                                 </div>
+                        <?php endif ?>
 
                     <?php if (session('mensaje')): ?>
                         <div class="alert alert-success alert-dismissible fade show" role="alert">

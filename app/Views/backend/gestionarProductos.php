@@ -55,7 +55,7 @@
                             <td class="text-center">$<?= esc($row['precio_producto'] ?? '') ?></td>
                             <td class="text-center"><?= esc($row['stock_producto'] ?? '') ?></td>
                             <td class="text-center">
-                                <a class="btn btn-success btn-sm" href="<?=base_url('formularioEditarProducto/'.$row['id_producto']); ?>">
+                                <a class="btn btn-success btn-sm" href="<?=base_url('editarProducto/'.$row['id_producto']); ?>">
                                     <i class="bi bi-pencil-square"></i> Editar
                                 </a>
                             </td>
