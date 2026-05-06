@@ -4,7 +4,7 @@ class CategoriaService {
     protected $model;
 
     public function __construct() {
-        $this->model = new \App\Models\CategoriaModel();
+        $this->model = new \App\Models\categoria_model();
     }
 
  

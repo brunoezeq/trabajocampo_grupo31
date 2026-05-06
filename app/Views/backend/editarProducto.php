@@ -17,7 +17,7 @@
                         </div>
                     <?php endif; ?>
 
-                    <?= form_open_multipart(base_url('actualizar')) ?>
+                    <?= form_open_multipart(base_url('formularioEditarProducto/' . $producto['id_producto'])) ?>
 
                     <div class="mb-3">
                         <label for="nombre" class="form-label text-black">Nombre del Producto</label>

@@ -44,10 +44,9 @@ $routes->get('usuario/getLocalidadesPorProvincia/(:num)', 'UsuarioController::ge
 
 /* --- PRODUCTOS --- */
 $routes->get('catalogo', 'ProductoController::mostrarCatalogo'); //muestra vista catálogo
-$routes->get('cargarProducto', 'ProductoController::formularioCargarProducto', ['filter' => 'roladmin']); //registra producto
-$routes->post('cargarProducto', 'ProductoController::mostrarFormularioCarga', ['filter' => 'roladmin']); // muestra vista cargar producto
+$routes->get('cargarProducto', 'ProductoController::mostrarFormularioCarga', ['filter' => 'roladmin']); // muestra vista cargar producto
 $routes->post('registrarProducto', 'ProductoController::registrarProducto', ['filter' => 'roladmin']); // procesa datos del formulario de carga de producto
-$routes->get('gestionarProducto', 'ProductoController::gestionarProducto', ['filter' => 'roladmin']); //muestra vista gestionar producto
+$routes->get('gestionarProductos', 'ProductoController::gestionarProductos', ['filter' => 'roladmin']); //muestra vista gestionar producto
 $routes->get('editarProducto/(:num)', 'ProductoController::editarProducto/$1', ['filter' => 'roladmin']);
 $routes->post('actualizar', 'ProductoController::actualizarProducto', ['filter' => 'roladmin']);
 $routes->get('eliminarProducto/(:num)', 'ProductoController::eliminarProducto/$1', ['filter' => 'roladmin']);

@@ -6,7 +6,7 @@ class ProductoService {
 
     public function __construct() {
 
-        $this->model = new \App\Models\ProductoModel();
+        $this->model = new \App\Models\producto_model();
         
     }
 
@@ -50,12 +50,21 @@ class ProductoService {
     }
 
     public function insertar($datos, $imagen) {
+
+        $datosProducto = [
+        'nombre_producto'      => $datos['nombre'],
+        'descripcion_producto' => $datos['descripcion'],
+        'precio_producto'      => $datos['precio'],
+        'stock_producto'       => $datos['stock'],
+        'categoria_producto'   => $datos['categoria'],
+        'estado_producto'      => 1
+    ];
         if ($imagen && $imagen->isValid()) {
             $nombreImg = $imagen->getRandomName();
             $imagen->move(ROOTPATH . 'public/uploads', $nombreImg);
             $datos['imagen'] = $nombreImg;
         }
-        return $this->model->insert($datos);
+        return $this->model->insert($datosProducto);
     }
 
     public function actualizar($id, $datos, $imagen = null) {

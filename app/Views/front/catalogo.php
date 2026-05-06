@@ -53,7 +53,7 @@
           <?php foreach($producto as $producto1): ?>
             <div class="col-md-6 mb-4">
               <div class="card h-100">
-                <img src="<?= base_url('public/assest/img/'.$producto1['imagen_producto']) ?>" class="card-img-top" alt="<?= esc($producto1['nombre_producto']) ?>">
+                <img src="<?= base_url('assets/img/'.$producto1['imagen_producto']) ?>" class="card-img-top" alt="<?= esc($producto1['nombre_producto']) ?>">
                 <hr>
                 <div class="card-body text-center">
                   <h5 class="card-title"><?= esc($producto1['nombre_producto']) ?></h5>

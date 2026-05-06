@@ -93,7 +93,7 @@ CREATE TABLE `medio_pago` (
 
 CREATE TABLE `perfil` (
   `id_perfil` int(11) NOT NULL,
-  `descripción_perfil` varchar(50) NOT NULL
+  `descripcion_perfil` varchar(50) NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 -- --------------------------------------------------------
@@ -221,7 +221,7 @@ ALTER TABLE `usuario`
   ADD KEY `perfil_id` (`perfil_id`),
   ADD KEY `fk_usuario_domicilio` (`domicilio_id`);
 
-  --Restricciones UNIQUE para la tabla usuario
+  -- Restricciones UNIQUE para la tabla usuario
 ALTER TABLE `usuario` 
 ADD CONSTRAINT `UQ_dni` UNIQUE (`dni`);
 
@@ -356,35 +356,35 @@ COMMIT;
 -- LOTE DE DATOS
 
 -- Categoria
-INSERT INTO `categoria` (`nombre_categoria`) VALUES
+INSERT INTO `categoria` (`descripcion_categoria`) VALUES
 ('Café en Grano'),
 ('Café Molido'),
 ('Cafeteras'),
 ('Accesorios'),
 ('Kits de Regalo');
 
---Perfil
-INSERT INTO `perfil` (`nombre_perfil`) VALUES
+-- Perfil
+INSERT INTO `perfil` (`descripcion_perfil`) VALUES
 ('Administrador'),
 ('Cliente');
 
---Producto
-INSERT INTO `producto` (`nombre_producto`, `descripcion_producto`, `precio_unitario`, `stock_actual`, `categoria_id`) VALUES
-('Brasil Mogiana 250g', 'Notas de chocolate y nueces, baja acidez.', 9500.00, 30, 1),
-('Colombia Huila 250g', 'Notas cítricas y dulces, cuerpo medio.', 11500.00, 25, 1),
-('Molido Espresso 500g', 'Molienda fina para máquinas de café hogareñas.', 14000.00, 15, 2),
-('Prensa Francesa 350ml', 'Vidrio templado y acero inoxidable.', 18500.00, 10, 3),
-('Cafetera Italiana 6 tazas', 'Aluminio reforzado, mango ergonómico.', 22000.00, 8, 3),
-('Espumador de Leche', 'Batidor a pilas para leche caliente o fría.', 7500.00, 20, 4),
-('Filtros V60-02', 'Pack de 100 unidades de papel blanco.', 8200.00, 50, 4),
-('Kit Barista Principiante', 'Incluye Prensa Francesa + 250g de café Brasil.', 26000.00, 5, 5);
+-- Producto
+INSERT INTO `producto` (`nombre_producto`, `descripcion_producto`, `precio_producto`, `stock_producto`, `categoria_producto`,`estado_producto`) VALUES
+('Brasil Mogiana 250g', 'Notas de chocolate y nueces, baja acidez.', 9500.00, 30, 1, 1),
+('Colombia Huila 250g', 'Notas cítricas y dulces, cuerpo medio.', 11500.00, 25, 1,1),
+('Molido Espresso 500g', 'Molienda fina para máquinas de café hogareñas.', 14000.00, 15, 2, 1),
+('Prensa Francesa 350ml', 'Vidrio templado y acero inoxidable.', 18500.00, 10, 3, 1),
+('Cafetera Italiana 6 tazas', 'Aluminio reforzado, mango ergonómico.', 22000.00, 8, 3, 1),
+('Espumador de Leche', 'Batidor a pilas para leche caliente o fría.', 7500.00, 20, 4, 1),
+('Filtros V60-02', 'Pack de 100 unidades de papel blanco.', 8200.00, 50, 4, 1),
+('Kit Barista Principiante', 'Incluye Prensa Francesa + 250g de café Brasil.', 26000.00, 5, 5, 1);
 
---Provincia
+-- Provincia
 INSERT INTO `provincia` (`id_provincia`, `nombre_provincia`) VALUES
 (1, 'Chaco'),
 (2, 'Corrientes');
 
---Localidad
+-- Localidad
 INSERT INTO `localidad` (`id_localidad`, `nombre_localidad`, `provincia_id`) VALUES
 (18007010, 'Bella Vista', 2),
 (18014010, 'Berón de Astrada', 2),
