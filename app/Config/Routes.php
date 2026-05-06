@@ -49,7 +49,8 @@ $routes->post('registrarProducto', 'ProductoController::registrarProducto', ['fi
 $routes->get('gestionarProductos', 'ProductoController::gestionarProductos', ['filter' => 'roladmin']); //muestra vista gestionar producto
 $routes->get('editarProducto/(:num)', 'ProductoController::mostrarFormularioEditar/$1', ['filter' => 'roladmin']);
 $routes->post('editarProducto/(:num)', 'ProductoController::editarProducto/$1', ['filter' => 'roladmin']);
-$routes->get('cambiarEstadoProducto/(:num)/(:num)', 'ProductoController::cambiarEstadoProducto/$1/$2');
+$routes->get('eliminarProducto/(:num)', 'ProductoController::eliminarProducto/$1');
+$routes->get('activarProducto/(:num)', 'ProductoController::activarProducto/$1');
 
 
 

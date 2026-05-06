@@ -6,15 +6,24 @@ use App\Models\categoria_model;
 
 class ProductoController extends BaseController{
 
+//Servicios de producto y categoría para manejar la lógica de negocio 
+protected $productoService;
+protected $categoriaService;
+
+public function initController(\CodeIgniter\HTTP\RequestInterface $request, \CodeIgniter\HTTP\ResponseInterface $response, \Psr\Log\LoggerInterface $logger) {
+    parent::initController($request, $response, $logger);
+    //Instanciamos los servicios producto y categoria
+    $this->productoService = new \App\Services\ProductoService();
+    $this->categoriaService = new \App\Services\CategoriaService();
+    }
+
+
 
   public function mostrarFormularioCarga() {
-     //Servicio de categorias
-    $categoriaService = new \App\Services\CategoriaService();
-    
     $data = [
         'titulo'     => 'Cargar Producto',
         // Llamada al servicio para obtener todas las categorías
-        'categoria'  => $categoriaService->obtenerTodas() 
+        'categoria'  => $this->categoriaService->obtenerTodas()
     ];
     
     return view('front/header_admin', $data)
@@ -23,63 +32,51 @@ class ProductoController extends BaseController{
 }
 
 public function registrarProducto() {
-    //Servicio de productos
-    $productoService = new \App\Services\ProductoService();
     $request = \Config\Services::request();
     //Recupera datos del formulario
     $datos = $request->getPost();
     $imagen = $request->getFile('imagen');
 
     //Llamada al servicio para validar los datos del producto
-    $errores = $productoService->validarDatos($datos, $imagen);
+    $errores = $this->productoService->validarDatos($datos, $imagen);
 
     if (!empty($errores)) {
         //Si hay errores de validación, se los muestra al usuario
         return redirect()->back()->withInput()->with('errores', $errores);
     }
     //Si no hay errores de validación, se llama al servicio para insertar el producto
-    $resultado = $productoService->insertar($datos, $imagen);
+    $resultado = $this->productoService->insertar($datos, $imagen);
 
     if ($resultado === false) {
         //Si no se pudo insertar el producto, se muestra el error correspondiente
-        return redirect()->back()->withInput()->with('errores', 'Hubo un problema técnico y no se pudo guardar el producto.');
+        return redirect()->back()->withInput()->with('errores', 'No se pudo cargar el producto.');
     }
     //Si el producto se insertó correctamente, se redirige con un mensaje de éxito
      return redirect()->back()->with('mensaje', 'Guardado con éxito');
 }
 
   public function mostrarFormularioEditar($id = null) {
-    //Servicio de productos
-    $productoService = new \App\Services\ProductoService();
-     //Servicio de categorias
-    $categoriaService = new \App\Services\CategoriaService();
-    
+
     $data = [
         'titulo'     => 'Editar Producto',
         // Llamada al servicio producto para obtener los datos del producto a editar
-        'producto'   => $productoService->obtenerPorId($id),
+        'producto'   => $this->productoService->obtenerPorId($id),
         // Llamada al servicio para obtener todas las categorías
-        'categoria'  => $categoriaService->obtenerTodas(),
+        'categoria'  => $this->categoriaService->obtenerTodas(),
     ];
-    if(data['producto'] == null){
-        //Si no se encuentra el producto, se muestra el error correspondiente 
-            return redirect()->back()->with('mensaje', 'No se encontro el producto solicitado');
-    }
-
     return view('front/header_admin', $data)
          . view('backend/editarProducto', $data)
          . view('front/footer_admin');
 }
 
 public function editarProducto($id = null) {
-        $productoService = new \App\Services\ProductoService();
         $request = \Config\Services::request();
         //Recupera datos del formulario
         $datos = $request->getPost();
         $imagen = $request->getFile('imagen');
 
         //Llamada al servicio para validar los datos del producto
-    $errores = $productoService->validarDatos($datos, $imagen);
+    $errores = $this->productoService->validarDatos($datos, $imagen);
 
     if (!empty($errores)) {
         //Si hay errores de validación, se los muestra al usuario
@@ -87,7 +84,7 @@ public function editarProducto($id = null) {
     }
 
      //Si no hay errores de validación, se llama al servicio para actualizar el producto
-    $resultado = $productoService->actualizar($id, $datos, $imagen);
+    $resultado = $this->productoService->actualizar($id, $datos, $imagen);
 
      if ($resultado === false) {
         //Si no se pudo editar el producto, se muestra un error
@@ -99,20 +96,20 @@ public function editarProducto($id = null) {
 
 }
 
- public function cambiarEstadoProducto($id, $estado)
+
+ public function eliminarProducto($id)
     {
-        $productoService = new \App\Services\ProductoService();
-        $productoModel = new producto_model();
+         $this->productoService->cambiarEstado($id, 0);
 
-        $productoService->cambiarEstado($id, $estado);
-
-        $mensaje = $estado == 1 
-            ? 'Producto activado con éxito' 
-            : 'Producto desactivado con éxito';
-
-        return redirect()->back()->with('mensaje', $mensaje);
+        return redirect()->back()->with('mensaje', 'Producto eliminado con éxito');
     }
 
+ public function activarProducto($id)
+    {
+        $this->productoService->cambiarEstado($id, 1);
+
+        return redirect()->back()->with('mensaje', 'Producto activado con éxito');
+    }
 
     public function gestionarProductos(){
 
