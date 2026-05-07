@@ -45,13 +45,9 @@ public function registrarProducto() {
         return redirect()->back()->withInput()->with('errores', $errores);
     }
     //Si no hay errores de validación, se llama al servicio para insertar el producto
-    $resultado = $this->productoService->insertar($datos, $imagen);
-
-    if ($resultado === false) {
-        //Si no se pudo insertar el producto, se muestra el error correspondiente
-        return redirect()->back()->withInput()->with('errores', 'No se pudo cargar el producto.');
-    }
-    //Si el producto se insertó correctamente, se muestra un mensaje de éxito
+    $this->productoService->insertar($datos, $imagen);
+    
+    //Muestra un mensaje de éxito
      return redirect()->back()->with('mensaje', 'Guardado con éxito');
 }
 
@@ -84,12 +80,9 @@ public function editarProducto($id = null) {
     }
 
      //Si no hay errores de validación, se llama al servicio para actualizar el producto
-    $resultado = $this->productoService->actualizar($id, $datos, $imagen);
+    $this->productoService->actualizar($id, $datos, $imagen);
 
-     if ($resultado === false) {
-        //Si no se pudo editar el producto, se muestra un error
-        return redirect()->back()->withInput()->with('errores', 'No se pudo cargar el producto.');
-    }
+   
 
     //Si el producto se editó correctamente, se muestra un mensaje de éxito
      return redirect()->back()->with('mensaje', 'Producto editado con éxito');
