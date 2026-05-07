@@ -37,8 +37,7 @@ class ProductoService {
             $errores['stock'] = 'El stock debe ser un número';
         }
 
-        // Validación de Imagen (Solo si se proporciona el objeto de archivo)
-        // Validamos solo si hay un intento de carga o si es estrictamente necesario
+        // Validación de Imagen
         if ($imagen !== null) {
             if (!$imagen->isValid()) {
                 $errores['imagen'] = 'El archivo debe ser una imagen válida';
