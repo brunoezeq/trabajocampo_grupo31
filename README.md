@@ -1,61 +1,31 @@
-# CodeIgniter 4 Framework
+# Trabajao de Campo - Grupo 31: "E-Commerce: Neighborhood Café"
 
-## What is CodeIgniter?
+Para instalar el proyecto en su PC, siga estos pasos sencillos:
 
-CodeIgniter is a PHP full-stack web framework that is light, fast, flexible and secure.
-More information can be found at the [official site](https://codeigniter.com).
+---
+## Descarga Necesaria
+* **XAMPP:** [Descargar XAMPP](https://www.apachefriends.org/download.html)
+---
+## Guía de Instalación Rápida
 
-This repository holds the distributable version of the framework.
-It has been built from the
-[development repository](https://github.com/codeigniter4/CodeIgniter4).
+1.  **Iniciar XAMPP:** * **Abra** el XAMPP Control Panel.
+    * **Inicie** los servicios de **Apache** y **MySQL** haciendo clic en el botón "Start" de cada uno.
 
-More information about the plans for version 4 can be found in [CodeIgniter 4](https://forum.codeigniter.com/forumdisplay.php?fid=28) on the forums.
+2.  **Mover la carpeta:** * **Copie la carpeta** `trabajocampo_grupo31` (del repositorio) y péguela dentro de la ruta `C:\xampp\htdocs`.
 
-You can read the [user guide](https://codeigniter.com/user_guide/)
-corresponding to the latest version of the framework.
+3.  **Cargar la base de datos:** * **Entre** a [localhost/phpmyadmin](http://localhost/phpmyadmin) desde el navegador.
+    * **Cree** una base de datos nueva con el nombre: `trabajocampo_grupo31`.
+    * En la pestaña **"Importar"**, **elija** el archivo `bd_grupo31.sql` que se encuentra en la raíz de la carpeta del proyecto.
+    * **Haga** clic en el botón **"Importar"** al final de la página.
 
-## Important Change with index.php
+4.  **Configurar el archivo .env:** * **Busque** el archivo llamado `env` (sin punto al inicio) en la raíz del proyecto.
+    * **Renómbrelo** a `.env` (agregando el punto al principio).
+    * **Ábralo** con un editor de texto (como Bloc de notas o VS Code).
+    * **Verifique** que la URL sea `http://localhost/trabajocampo_grupo31/` y que los datos de la base de datos (usuario `root` y contraseña vacía) coincidan con su configuración local.
 
-`index.php` is no longer in the root of the project! It has been moved inside the *public* folder,
-for better security and separation of components.
+5.  **Acceso al sistema:** * Ya **puede** ingresar al sistema desde la siguiente dirección en su navegador: 
+    * [http://localhost/trabajocampo_grupo31/](http://localhost/trabajocampo_grupo31/)
 
-This means that you should configure your web server to "point" to your project's *public* folder, and
-not to the project root. A better practice would be to configure a virtual host to point there. A poor practice would be to point your web server to the project root and expect to enter *public/...*, as the rest of your logic and the
-framework are exposed.
+---
 
-**Please** read the user guide for a better explanation of how CI4 works!
-
-## Repository Management
-
-We use GitHub issues, in our main repository, to track **BUGS** and to track approved **DEVELOPMENT** work packages.
-We use our [forum](http://forum.codeigniter.com) to provide SUPPORT and to discuss
-FEATURE REQUESTS.
-
-This repository is a "distribution" one, built by our release preparation script.
-Problems with it can be raised on our forum, or as issues in the main repository.
-
-## Contributing
-
-We welcome contributions from the community.
-
-Please read the [*Contributing to CodeIgniter*](https://github.com/codeigniter4/CodeIgniter4/blob/develop/CONTRIBUTING.md) section in the development repository.
-
-## Server Requirements
-
-PHP version 8.2 or higher is required, with the following extensions installed:
-
-- [intl](http://php.net/manual/en/intl.requirements.php)
-- [mbstring](http://php.net/manual/en/mbstring.installation.php)
-
-> [!WARNING]
-> - The end of life date for PHP 7.4 was November 28, 2022.
-> - The end of life date for PHP 8.0 was November 26, 2023.
-> - The end of life date for PHP 8.1 was December 31, 2025.
-> - If you are still using below PHP 8.2, you should upgrade immediately.
-> - The end of life date for PHP 8.2 will be December 31, 2026.
-
-Additionally, make sure that the following extensions are enabled in your PHP:
-
-- json (enabled by default - don't turn it off)
-- [mysqlnd](http://php.net/manual/en/mysqlnd.install.php) if you plan to use MySQL
-- [libcurl](http://php.net/manual/en/curl.requirements.php) if you plan to use the HTTP\CURLRequest library
+**Nota:** No se **olvide** de mantener el panel de XAMPP con los servicios encendidos mientras utilice la aplicación.
