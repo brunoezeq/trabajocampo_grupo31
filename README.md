@@ -1,5 +1,11 @@
 # Trabajo de Campo - Grupo 31: "E-Commerce: Neighborhood Café"
 
+---
+Piezas de codigo mas importantes a revisar: 
+-> App/Controllers
+-> App/Services
+---
+
 Para instalar el proyecto en su PC, siga estos pasos sencillos:
 
 ---
