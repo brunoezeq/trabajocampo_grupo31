@@ -1,4 +1,4 @@
-# Trabajao de Campo - Grupo 31: "E-Commerce: Neighborhood CafÈ"
+# Trabajo de Campo - Grupo 31: "E-Commerce: Neighborhood Caf√©"
 
 Para instalar el proyecto en su PC, siga estos pasos sencillos:
 
@@ -6,26 +6,26 @@ Para instalar el proyecto en su PC, siga estos pasos sencillos:
 ## Descarga Necesaria
 * **XAMPP:** [Descargar XAMPP](https://www.apachefriends.org/download.html)
 ---
-## GuÌa de InstalaciÛn R·pida
+## Gu√≠a de Instalaci√≥n R√°pida
 
 1.  **Iniciar XAMPP:** * **Abra** el XAMPP Control Panel.
-    * **Inicie** los servicios de **Apache** y **MySQL** haciendo clic en el botÛn "Start" de cada uno.
+    * **Inicie** los servicios de **Apache** y **MySQL** haciendo clic en el bot√≥n "Start" de cada uno.
 
-2.  **Mover la carpeta:** * **Copie la carpeta** `trabajocampo_grupo31` (del repositorio) y pÈguela dentro de la ruta `C:\xampp\htdocs`.
+2.  **Mover la carpeta:** * **Copie la carpeta** `trabajocampo_grupo31` (del repositorio) y p√©guela dentro de la ruta `C:\xampp\htdocs`.
 
 3.  **Cargar la base de datos:** * **Entre** a [localhost/phpmyadmin](http://localhost/phpmyadmin) desde el navegador.
     * **Cree** una base de datos nueva con el nombre: `trabajocampo_grupo31`.
-    * En la pestaÒa **"Importar"**, **elija** el archivo `bd_grupo31.sql` que se encuentra en la raÌz de la carpeta del proyecto.
-    * **Haga** clic en el botÛn **"Importar"** al final de la p·gina.
+    * En la pesta√±a **"Importar"**, **elija** el archivo `bd_grupo31.sql` que se encuentra en la ra√≠z de la carpeta del proyecto.
+    * **Haga** clic en el bot√≥n **"Importar"** al final de la p√°gina.
 
-4.  **Configurar el archivo .env:** * **Busque** el archivo llamado `env` (sin punto al inicio) en la raÌz del proyecto.
-    * **RenÛmbrelo** a `.env` (agregando el punto al principio).
-    * **¡bralo** con un editor de texto (como Bloc de notas o VS Code).
-    * **Verifique** que la URL sea `http://localhost/trabajocampo_grupo31/` y que los datos de la base de datos (usuario `root` y contraseÒa vacÌa) coincidan con su configuraciÛn local.
+4.  **Configurar el archivo .env:** * **Busque** el archivo llamado `env` (sin punto al inicio) en la ra√≠z del proyecto.
+    * **Ren√≥mbrelo** a `.env` (agregando el punto al principio).
+    * **√Åbralo** con un editor de texto (como Bloc de notas o VS Code).
+    * **Verifique** que la URL sea `http://localhost/trabajocampo_grupo31/` y que los datos de la base de datos (usuario `root` y contrase√±a vac√≠a) coincidan con su configuraci√≥n local.
 
-5.  **Acceso al sistema:** * Ya **puede** ingresar al sistema desde la siguiente direcciÛn en su navegador: 
+5.  **Acceso al sistema:** * Ya **puede** ingresar al sistema desde la siguiente direcci√≥n en su navegador: 
     * [http://localhost/trabajocampo_grupo31/](http://localhost/trabajocampo_grupo31/)
 
 ---
 
-**Nota:** No se **olvide** de mantener el panel de XAMPP con los servicios encendidos mientras utilice la aplicaciÛn.
+**Nota:** No se **olvide** de mantener el panel de XAMPP con los servicios encendidos mientras utilice la aplicaci√≥n.
