@@ -35,9 +35,6 @@
             <a class="nav-link" href="<?= base_url('gestionarProductos') ?>">Gestionar Producto</a>
           </li>
           <li class="nav-item">
-            <a class="nav-link" href="<?= base_url('verConsultas') ?>">Ver Consultas</a>
-          </li>
-          <li class="nav-item">
             <a class="nav-link" href="<?= base_url('verVentas') ?>">Ver Ventas</a>
           </li>
           <li class="nav-item">

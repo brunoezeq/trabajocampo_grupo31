@@ -13,7 +13,7 @@ class venta_model extends Model
     protected $returnType     = 'array';
     protected $useSoftDeletes = false;
 
-    protected $allowedFields = ['cliente_id', 'fecha_venta', 'dni_cliente', 'domicilio_cliente', 'celular_cliente', 'medio_pago_id'];
+    protected $allowedFields = ['cliente_id', 'fecha_venta', 'medio_pago_id'];
 
     protected bool $allowEmptyInserts = false;
     protected bool $updateOnlyChanged = true;

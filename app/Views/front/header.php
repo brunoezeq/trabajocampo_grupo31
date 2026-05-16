@@ -54,8 +54,6 @@ shrink-to-fit=no">
                 </a>
                 <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="usuarioDropdown" style="background-color: #143d33;">
                     <li><a class="dropdown-item" href="<?php echo base_url("verCarrito"); ?>"><i class="bi bi-cart"></i> Carrito</a></li>
-                    <li><a class="dropdown-item" href="<?php echo base_url("verMisCompras"); ?>"><i class="bi bi-bag-check"></i> Mis Compras</a></li>
-                    <li><a class="dropdown-item" href="<?php echo base_url("editarPerfil"); ?>"><i class="bi bi-pencil-square"></i> Editar Perfil</a></li>
                     <li><hr class="dropdown-divider"></li>
                     <li><a class="dropdown-item text-danger" href="<?php echo base_url("logout"); ?>"><i class="bi bi-box-arrow-right"></i> Salir</a></li>
                 </ul>
