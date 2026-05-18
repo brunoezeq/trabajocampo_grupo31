@@ -5,12 +5,21 @@ namespace App\Controllers;
 use App\Models\producto_model;
 use App\Models\medio_pago_model;
 use App\Services\carritoService;
+use App\Services\ProductoService;
 
 class CarritoController extends BaseController
 {
+    protected $carritoService;
+    protected $productoService;
+
+    public function __construct()
+    {
+        $this->carritoService = new CarritoService();
+        $this->productoService = new ProductoService();
+    }
 
     // Mostrar carrito
-    public function verCarrito()
+    public function mostrarCarrito()
     {
         $cart = \Config\Services::cart();
 
@@ -27,57 +36,51 @@ class CarritoController extends BaseController
     // Agregar producto al carrito
     public function agregarAlCarrito()
     {
-        $cart = \Config\Services::cart();
 
         $idProducto = $this->request->getPost('id');
 
-        $productoModel = new producto_model();
-
-        $producto = $productoModel->find($idProducto);
-
-        $service = new CarritoService();
+        $producto = $ProductoService->obtenerPorId($idProducto);
 
         // Validar producto
-        $errorProducto = $service->validarProducto($producto);
+        $errorProducto = $carritoService->validarProducto($producto);
 
         if ($errorProducto) {
             return redirect()->back()->with('mensaje', $errorProducto);
         }
 
         // Verificar stock
-        $errorStock = $service->verificarStock($producto, $cart);
+        $errorStock = carritoService->verificarStock($producto, $cart);
 
         if ($errorStock) {
             return redirect()->back()->with('mensaje', $errorStock);
         }
 
         // Agregar producto al carrito
-        $service->agregarProducto($producto, $cart);
+        $service->agregarProducto($producto);
 
         return redirect()->to('verCarrito')
                          ->with('mensaje', 'Producto agregado correctamente.');
     }
 
-
-    //Eliminar producto del carrito
-    public function eliminarItem($rowid)
+    // Eliminar producto del carrito por su ID de producto
+    public function eliminarItemCarrito($id_producto)
     {
-        $cart = \Config\Services::cart();
+       $productoEliminado= $this->carritoService->eliminarPorId($id_producto);
 
-        $cart->remove($rowid);
+       if(!$productoEliminado){
+           return redirect()->to('verCarrito')
+                            ->with('mensaje', 'No se encontró el item en el carrito.');
+       }
+       return redirect()->to('verCarrito')
+                        ->with('mensaje', 'Se eliminó el item del carrito.');
 
-        return redirect()->to('verCarrito')
-                         ->with('mensaje', 'Producto eliminado del carrito.');
     }
 
 
     // Vaciar carrito
     public function vaciarCarrito()
     {
-        $cart = \Config\Services::cart();
-
-        $cart->destroy();
-
+        $this->CarritoService->destruirCarrito();
         return redirect()->to('verCarrito')
                          ->with('mensaje', 'Carrito vaciado correctamente.');
     }

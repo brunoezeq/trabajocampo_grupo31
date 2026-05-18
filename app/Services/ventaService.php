@@ -1,9 +1,39 @@
 <?php
 
 namespace App\Services;
+use App\Models\producto_model;
+use App\Models\venta_model;
+use App\Models\detalle_venta_model;
 
 class VentaService
 {
+    //Registrar venta
+        public function registrarVenta($itemsCarrito, $clienteId, $medioPagoId)
+    {
+        $db = \Config\Database::connect();
+        $db->transStart();
+
+        $ventaId = $this->crearVenta($clienteId, $medioPagoId);
+
+        if (!$ventaId) {
+            $db->transRollback();
+            return false;
+        }
+        $resultadoDetalles= $this->crearDetallesVenta($ventaId, $itemsCarrito);
+         if (!$ResultadoDetalles) {
+            $db->transRollback();
+            return false;
+        }
+        $resultadoActulizarStock=  $this->actualizarStock($itemsCarrito);
+         if (!$resultadoActulizarStock) {
+            $db->transRollback();
+            return false;
+        }
+        $db->transComplete();
+        return true;
+    }
+
+
     /**
      * 🔹 Verificar stock
      */
@@ -28,78 +58,61 @@ class VentaService
     /**
      * 🔹 Registrar venta completa
      */
-    public function registrarVenta(
-        $cartItems,
-        $clienteId,
-        $medioPagoId,
-        $ventaModel,
-        $detalleModel,
-        $productoModel,
-        $db
-    ) {
-
-        $db->transStart();
+    public function crearVenta($clienteId, $medioPagoId) 
+        {
+        $ventaModel = new \App\Models\venta_model();
 
         // Crear venta
-        $ventaData = $this->armarVenta($clienteId, $medioPagoId);
+        $ventaData = [
+        'cliente_id'    => $clienteId,
+        'fecha_venta'   => date('Y-m-d'),
+        'medio_pago_id' => $medioPagoId
+         ];
 
-        $ventaId = $ventaModel->insert($ventaData, true);
+         $ventaId = $ventaModel->insert($ventaData, true);
 
-        if (!$ventaId) {
-            return false;
-        }
+         if (!$ventaId) {
+             return null; // Error al crear la venta
+         }
+         return $ventaId
+    }
 
-        // Registrar detalle y actualizar stock
-        foreach ($cartItems as $item) {
+    private function crearDetallesVenta($ventaId, $itemsCarrito)
+{
+    $detalleModel = new \App\Models\detalle_venta_model();
 
-            $producto = $productoModel->find($item['id']);
+    foreach ($itemsCarrito as $item) {
+       $detalleId= $detalleModel->insert([
+            'venta_id'         => $ventaId,
+            'producto_id'      => $item['id'],
+            'detalle_cantidad' => $item['qty'],
+            'detalle_precio'   => $item['price']
+        ]);
+    }
+}
 
-            // detalle
-            $detalleData = $this->armarDetalle($ventaId, $item);
+    private function actualizarStock($itemsCarrito)
+    {
+    $productoModel = new \App\Models\producto_model();
 
-            $detalleModel->insert($detalleData);
+    foreach ($itemsCarrito as $item) {
+        $producto = $productoModel->obtenerPorId($item['id']);
 
-            // actualizar stock
+        if ($producto) {
             $nuevoStock = $producto['stock_producto'] - $item['qty'];
 
             $productoModel->update($item['id'], [
                 'stock_producto' => $nuevoStock
             ]);
         }
-
-        $db->transComplete();
-
-        return $db->transStatus();
+    }
     }
 
-    /**
-     * 🔹 Armar venta
-     */
-    private function armarVenta($clienteId, $medioPagoId)
+    // Obtener todas las ventas 
+    public function obtenerVentas($desde = null, $hasta = null)
     {
-        return [
-            'cliente_id' => $clienteId,
-            'fecha_venta' => date('Y-m-d'),
-            'medio_pago_id' => $medioPagoId
-        ];
-    }
+        $ventaModel = new \App\Models\venta_model();
 
-    /**
-     * 🔹 Armar detalle
-     */
-    private function armarDetalle($ventaId, $item)
-    {
-        return [
-            'venta_id' => $ventaId,
-            'producto_id' => $item['id'],
-            'detalle_cantidad' => $item['qty'],
-            'detalle_precio' => $item['price']
-        ];
-    }
-
-    // Obtener las ventas 
-    public function obtenerVentas($ventaModel, $desde = null, $hasta = null)
-    {
         $ventaModel->select('venta.*, usuario.nombre_usuario, usuario.apellido_usuario')
                 ->join('usuario', 'usuario.id_usuario = venta.cliente_id')
                 ->orderBy('fecha_venta', 'DESC');
@@ -116,8 +129,11 @@ class VentaService
     }
 
     // Obtener detalle de venta
-    public function obtenerDetalleVenta($idVenta, $ventaModel, $detalleModel)
+    public function obtenerDetalleVenta($idVenta)
     {
+        $ventaModel = new \App\Models\venta_model();
+        $detalleModel = new \App\Models\detalle_venta_model();
+
         $venta = $ventaModel
             ->select('venta.*, usuario.nombre_usuario, usuario.apellido_usuario')
             ->join('usuario', 'usuario.id_usuario = venta.cliente_id')

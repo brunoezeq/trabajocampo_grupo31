@@ -6,80 +6,63 @@ use App\Models\producto_model;
 use App\Models\venta_model;
 use App\Models\detalle_venta_model;
 use App\Services\VentaService;
+use App\Services\carritoService;
 
 class VentaController extends BaseController
 {
 
-    // Registra una venta
-    public function registrarVenta()
+
+// Registra una venta
+    public function comprarCarrito()
     {
-        $cart = \Config\Services::cart();
 
-        $cartItems = $cart->contents();
+        $carritoService = new carritoService();
 
-        if (empty($cartItems)) {
+        // Obtener los items del carrito
+        $itemsCarrito = $carritoService->obtenerItems
+
+        // 2. Validaciones de la Solicitud HTTP
+        if (empty($itemsCarrito)) {
             return redirect()->to('verCarrito')
                              ->with('mensaje', 'El carrito está vacío.');
         }
 
         $medioPago = $this->request->getPost('medio_pago');
-
         if (empty($medioPago)) {
             return redirect()->back()
                              ->with('mensaje', 'Debe seleccionar un medio de pago.');
         }
+        $ventaService = new VentaService();
 
-        $productoModel = new producto_model();
-        $ventaModel = new venta_model();
-        $detalleModel = new detalle_venta_model();
-
-        $db = \Config\Database::connect();
-
-        $service = new VentaService();
-
-        // Validar stock
-        $errorStock = $service->validarStock($cartItems, $productoModel);
-
+        $errorStock= $ventaService->validarStock($itemsCarrito, new producto_model());
         if ($errorStock) {
-            return redirect()->to('verCarrito')
+            return redirect()->back()
                              ->with('mensaje', $errorStock);
         }
 
-        // Registrar venta
-        $resultado = $service->registrarVenta(
-            $cartItems,
-            session('id_usuario'),
-            $medioPago,
-            $ventaModel,
-            $detalleModel,
-            $productoModel,
-            $db
-        );
+        $idUsuario= session('id_usuario');
+        $resultado= $ventaService->registrarVenta($itemsCarrito, $idUsuario, $medioPago);
 
         if (!$resultado) {
-            return redirect()->to('verCarrito')
-                             ->with('mensaje', 'Error al registrar la venta.');
+            return redirect()->to('mostrarCarrito')
+                             ->with('mensaje', 'Error al registrar la compra, intentelo nuevamente.');
         }
-
         // Vaciar carrito
-        $cart->destroy();
+        $carritoService->destruirCarrito();
 
         return redirect()->to('catalogo')
                          ->with('mensaje', 'Compra realizada correctamente.');
     }
 
     // Ver ventas
-    public function verVentas()
+    public function mostrarVentas()
     {
-        $ventaModel = new venta_model();
-
         $service = new VentaService();
 
         $desde = $this->request->getGet('desde');
         $hasta = $this->request->getGet('hasta');
 
         $data['venta'] = $service->obtenerVentas(
-            $ventaModel,
             $desde,
             $hasta
         );
@@ -90,17 +73,12 @@ class VentaController extends BaseController
     }
 
     //Ver detalles de las ventas
-    public function verDetalle($idVenta)
+    public function mostrarDetalle($idVenta)
     {
-        $ventaModel = new venta_model();
-        $detalleModel = new detalle_venta_model();
-
         $service = new VentaService();
 
         $detalleVenta = $service->obtenerDetalleVenta(
-            $idVenta,
-            $ventaModel,
-            $detalleModel
+            $idVenta
         );
 
         $data['venta'] = $detalleVenta['venta'];
