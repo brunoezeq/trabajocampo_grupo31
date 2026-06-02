@@ -12,6 +12,7 @@ use App\Models\detalle_venta_model;
 
 use App\Services\UsuarioService;
 use App\Services\UbicacionService;
+use App\Services\ServiceContainer;
 
 class UsuarioController extends BaseController  {
         
@@ -20,8 +21,9 @@ class UsuarioController extends BaseController  {
 
     public function __construct()
     {
-        $this->usuarioService = new UsuarioService();
-        $this->ubicacionService = new UbicacionService();
+        $container = ServiceContainer::getInstancia();
+        $this->usuarioService = $container->get(UsuarioService::class);
+        $this->ubicacionService = $container->get(UbicacionService::class);
     }
 
     public function mostrarRegistro(): string

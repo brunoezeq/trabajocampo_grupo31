@@ -118,5 +118,10 @@ class ServiceContainer
         $this->bindSingleton(\App\Services\MedioPagoService::class, function ($c) {
             return new \App\Services\MedioPagoService();
         });
+
+        // UsuarioService (singleton)
+        $this->bindSingleton(\App\Services\UsuarioService::class, function ($c) {
+            return new \App\Services\UsuarioService();
+        });
     }
 }
