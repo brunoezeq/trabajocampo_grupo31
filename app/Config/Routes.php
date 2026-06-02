@@ -52,5 +52,18 @@ $routes->post('editarProducto/(:num)', 'ProductoController::editarProducto/$1', 
 $routes->get('eliminarProducto/(:num)', 'ProductoController::eliminarProducto/$1');
 $routes->get('activarProducto/(:num)', 'ProductoController::activarProducto/$1');
 
+/* --- CARRITO --- */
+$routes->get('verCarrito', 'CarritoController::mostrarCarrito'); //cambiado
+$routes->get('mostrarCarrito', 'CarritoController::mostrarCarrito'); //cambiado (mantiene compatibilidad con llamadas internas que usan este nombre)
+$routes->post('agregarAlCarrito', 'CarritoController::agregarAlCarrito'); //cambiado
+$routes->get('eliminarItemCarrito/(:num)', 'CarritoController::eliminarItemCarrito/$1'); //cambiado
+$routes->get('vaciarCarrito', 'CarritoController::vaciarCarrito'); //cambiado
+
+/* --- VENTAS --- */
+$routes->post('comprarCarrito', 'VentaController::comprarCarrito'); //cambiado
+$routes->get('ventas', 'VentaController::mostrarVentas', ['filter' => 'roladmin']); //cambiado
+$routes->get('mostrarVentas', 'VentaController::mostrarVentas', ['filter' => 'roladmin']); //cambiado (compatibilidad)
+$routes->get('detalleVenta/(:num)', 'VentaController::mostrarDetalle/$1'); //cambiado
+
 
 

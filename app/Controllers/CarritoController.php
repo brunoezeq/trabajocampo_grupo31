@@ -3,19 +3,22 @@
 namespace App\Controllers;
 
 use App\Models\producto_model;
-use App\Models\medio_pago_model;
-use App\Services\carritoService;
-use App\Services\ProductoService;
+use App\Services\ServiceContainer;
 
 class CarritoController extends BaseController
 {
     protected $carritoService;
     protected $productoService;
+    protected $medioPagoService;
 
     public function __construct()
     {
-        $this->carritoService = new CarritoService();
-        $this->productoService = new ProductoService();
+        $container = ServiceContainer::getInstancia();
+
+        // Obtener instancias singletons desde el contenedor
+        $this->carritoService = $container->get(\App\Services\CarritoService::class);
+        $this->productoService = $container->get(\App\Services\ProductoService::class);
+        $this->medioPagoService = $container->get(\App\Services\MedioPagoService::class);
     }
 
     // Mostrar carrito
@@ -23,40 +26,36 @@ class CarritoController extends BaseController
     {
         $cart = \Config\Services::cart();
 
-        $medioPagoModel = new medio_pago_model();
-
         $data['titulo'] = 'Mi Carrito';
-        $data['medio_pago'] = $medioPagoModel->findAll();
+        $data['medio_pago'] = $this->medioPagoService->obtenerMetodosPago();
         $data['carrito'] = $cart->contents();
 
         return $this->render('front/carrito', $data);
     }
 
-
     // Agregar producto al carrito
     public function agregarAlCarrito()
     {
-
         $idProducto = $this->request->getPost('id');
 
-        $producto = $ProductoService->obtenerPorId($idProducto);
+        $producto = $this->productoService->obtenerPorId($idProducto);
 
         // Validar producto
-        $errorProducto = $carritoService->validarProducto($producto);
+        $errorProducto = $this->carritoService->validarProducto($producto);
 
         if ($errorProducto) {
             return redirect()->back()->with('mensaje', $errorProducto);
         }
 
         // Verificar stock
-        $errorStock = carritoService->verificarStock($producto, $cart);
+        $errorStock = $this->carritoService->verificarStock($producto);
 
         if ($errorStock) {
             return redirect()->back()->with('mensaje', $errorStock);
         }
 
         // Agregar producto al carrito
-        $service->agregarProducto($producto);
+        $this->carritoService->agregarProducto($producto);
 
         return redirect()->to('verCarrito')
                          ->with('mensaje', 'Producto agregado correctamente.');
@@ -65,22 +64,20 @@ class CarritoController extends BaseController
     // Eliminar producto del carrito por su ID de producto
     public function eliminarItemCarrito($id_producto)
     {
-       $productoEliminado= $this->carritoService->eliminarPorId($id_producto);
+       $productoEliminado = $this->carritoService->eliminarPorId($id_producto);
 
-       if(!$productoEliminado){
+       if (!$productoEliminado) {
            return redirect()->to('verCarrito')
                             ->with('mensaje', 'No se encontró el item en el carrito.');
        }
        return redirect()->to('verCarrito')
                         ->with('mensaje', 'Se eliminó el item del carrito.');
-
     }
-
 
     // Vaciar carrito
     public function vaciarCarrito()
     {
-        $this->CarritoService->destruirCarrito();
+        $this->carritoService->destruirCarrito();
         return redirect()->to('verCarrito')
                          ->with('mensaje', 'Carrito vaciado correctamente.');
     }

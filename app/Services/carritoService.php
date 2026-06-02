@@ -5,11 +5,12 @@ namespace App\Services;
 
 class CarritoService
 {
-     protected $cart;
+     protected $cartAdapter;
 
-         public function __construct()
+    // Inyectamos la interfaz del carrito de un framwework específico
+    public function __construct(carritoInterface $cartAdapter)
     {
-        $this->cart = \Config\Services::cart();
+        $this->cartAdapter = $cartAdapter;
     }
 
     // Valida si el producto se puede agregar al carrito
@@ -31,7 +32,8 @@ class CarritoService
     {
         $cantidadEnCarrito = 0;
 
-        foreach ($this->cart->contents() as $item) {
+        // Usamos el adaptador
+        foreach ($this->cartAdapter->obtenerContenido() as $item) {
             if ($item['id'] == $producto['id_producto']) {
                 $cantidadEnCarrito += $item['qty'];
             }
@@ -46,39 +48,31 @@ class CarritoService
 
 
   // Agrega el producto al carrito
-    public function agregarProducto($producto)
+  public function agregarProducto($producto)
     {
-        $this->cart->insert([
-            'id'    => $producto['id_producto'],
-            'name'  => $producto['nombre_producto'],
-            'price' => $producto['precio_producto'],
-            'qty'   => 1
-        ]);
+        // Usamos el adaptador
+        $this->cartAdapter->agregar(
+            $producto['id_producto'],
+            $producto['nombre_producto'],
+            $producto['precio_producto'],
+            1
+        );
     }
 
    // Eliminar producto del carrito por su ID de producto
-    public function eliminarItem($id_producto)
+ public function eliminarPorId($id_producto)
     {
-        // Busca el rowid correspondiente al id_producto
-        foreach ($this->cart->contents() as $item) {
-            if ($item['id'] == $id_producto) {
-                $this->cart->remove($item['rowid']);
-                
-                return true; // Producto eliminado exitosamente
-            }
-        }
-        return false; // Producto no encontrado en el carrito
+        return $this->cartAdapter->eliminar($id_producto);
     }
 
     // Vaciar carrito y todos sus items
-    public function destruirCarrito()
+public function destruirCarrito()
     {
-        $this->cart->destroy();
+        $this->cartAdapter->vaciar();
     }
-}
 
 //Obtener todos los items cargados en el carrito
-    public function obtenerItems()
+ public function obtenerItems()
     {
-        return $this->cart->contents();
+        return $this->cartAdapter->obtenerContenido();
     }
