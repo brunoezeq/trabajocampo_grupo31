@@ -119,6 +119,16 @@ class ServiceContainer
             return new \App\Services\MedioPagoService();
         });
 
+        // DomicilioService (registrado como singleton para que UsuarioService lo obtenga como singleton)
+        $this->bindSingleton(\App\Services\DomicilioService::class, function ($c) {
+            return new \App\Services\DomicilioService();
+        });
+
+        // UbicacionService (registrado como singleton para que UsuarioService lo obtenga como singleton)
+        $this->bindSingleton(\App\Services\UbicacionService::class, function ($c) {
+            return new \App\Services\UbicacionService();
+        });
+
         // UsuarioService (singleton)
         $this->bindSingleton(\App\Services\UsuarioService::class, function ($c) {
             return new \App\Services\UsuarioService();

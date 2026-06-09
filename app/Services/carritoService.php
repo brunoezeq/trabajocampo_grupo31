@@ -2,6 +2,9 @@
 
 namespace App\Services;
 
+use App\Services\ServiceContainer;
+use App\Services\ProductoService;
+use App\Services\ValidationException;
 
 class CarritoService
 {
@@ -46,6 +49,41 @@ class CarritoService
         return null;
     }
 
+    // Validar stock para un conjunto de items (usado antes de procesar la compra)
+    public function validarStock($cartItems)
+    {
+        /** @var ProductoService $productoService */
+        $productoService = ServiceContainer::getInstancia()->get(ProductoService::class);
+
+        $errores = [];
+
+        foreach ($cartItems as $item) {
+            // Se asume que el item tiene la clave 'id' y 'qty' (compatibilidad con adaptador)
+            $productoId = isset($item['id']) ? $item['id'] : (isset($item['id_producto']) ? $item['id_producto'] : null);
+
+            if ($productoId === null) {
+                $errores['producto_indefinido'] = 'Item de carrito con id no definido.';
+                continue;
+            }
+
+            $producto = $productoService->obtenerPorId($productoId);
+
+            if (!$producto) {
+                $errores['producto_' . $productoId] = 'El producto no existe (id: ' . $productoId . ').';
+                continue;
+            }
+
+            if (!isset($item['qty']) || $producto['stock_producto'] < $item['qty']) {
+                $errores['stock_' . $productoId] = 'Stock insuficiente para el producto: ' . $producto['nombre_producto'];
+            }
+        }
+
+        if (!empty($errores)) {
+            throw new ValidationException($errores);
+        }
+
+        return true;
+    }
 
   // Agrega el producto al carrito
   public function agregarProducto($producto)

@@ -103,7 +103,13 @@ public function validarDatos($datos, $imagen = null) {
                 $errores['imagen'] = 'La imagen es demasiado pesada (máx 4MB)';
             }
         }
-        return $errores;
+
+        // Si hay errores, lanzar una excepción con el detalle
+        if (!empty($errores)) {
+            throw new ValidationException($errores);
+        }
+
+        return true;
     }
 
 }

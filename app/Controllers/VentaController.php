@@ -2,10 +2,8 @@
 
 namespace App\Controllers;
 
-use App\Models\producto_model;
-use App\Models\venta_model;
-use App\Models\detalle_venta_model;
 use App\Services\ServiceContainer;
+use App\Services\ValidationException;
 
 class VentaController extends BaseController
 {
@@ -18,44 +16,46 @@ class VentaController extends BaseController
         $this->carritoService = $container->get(\App\Services\CarritoService::class);
         $this->ventaService  = $container->get(\App\Services\VentaService::class);
     }
-
-    // Registra una venta
-    public function comprarCarrito()
+ 
+    public function registrarVenta($itemsCarrito)
     {
-        // Obtener los items del carrito
-        $itemsCarrito = $this->carritoService->obtenerItems();
-
-        // Validaciones
-        if (empty($itemsCarrito)) {
-            return redirect()->to('verCarrito')
-                             ->with('mensaje', 'El carrito está vacío.');
+        // Obtener usuario desde sesión
+        $clienteId = session('id_usuario');
+        if (empty($clienteId)) {
+            throw new \Exception('Usuario no autenticado.');
         }
 
-        $medioPago = $this->request->getPost('medio_pago');
-        if (empty($medioPago)) {
-            return redirect()->back()
-                             ->with('mensaje', 'Debe seleccionar un medio de pago.');
+        // Obtener medio de pago desde el request actual
+        $medioPagoId = $this->request->getPost('medio_pago');
+        if (empty($medioPagoId)) {
+            throw new \Exception('Debe seleccionar un medio de pago.');
         }
 
-        $errorStock = $this->ventaService->validarStock($itemsCarrito, new producto_model());
-        if ($errorStock) {
-            return redirect()->back()
-                             ->with('mensaje', $errorStock);
+        $db = \Config\Database::connect();
+        $db->transStart();
+
+        try {
+            
+            $this->ventaService->validarStock($itemsCarrito);
+
+            $ventaId = $this->ventaService->crearVenta($clienteId, $medioPagoId);
+            if (!$ventaId) {
+                throw new \Exception('Error al crear la venta.');
+            }
+
+            $this->ventaService->crearDetallesVenta($ventaId, $itemsCarrito, $medioPagoId);
+
+            $this->ventaService->actualizarStock($itemsCarrito);
+
+            $db->transComplete();
+            return true;
+        } catch (ValidationException $ve) {
+            $db->transRollback();
+            throw $ve;
+        } catch (\Exception $ex) {
+            $db->transRollback();
+            throw $ex;
         }
-
-        $idUsuario = session('id_usuario');
-        $resultado = $this->ventaService->registrarVenta($itemsCarrito, $idUsuario, $medioPago);
-
-        if (!$resultado) {
-            return redirect()->to('mostrarCarrito')
-                             ->with('mensaje', 'Error al registrar la compra, intentelo nuevamente.');
-        }
-
-        // Vaciar carrito
-        $this->carritoService->destruirCarrito();
-
-        return redirect()->to('catalogo')
-                         ->with('mensaje', 'Compra realizada correctamente.');
     }
 
     // Ver ventas

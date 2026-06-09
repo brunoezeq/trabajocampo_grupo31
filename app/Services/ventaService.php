@@ -1,111 +1,168 @@
 <?php
 
 namespace App\Services;
-use App\Models\producto_model;
+
 use App\Models\venta_model;
 use App\Models\detalle_venta_model;
+use App\Services\ServiceContainer;
+use App\Services\ProductoService;
+use App\Services\ValidationException;
 
 class VentaService
 {
     //Registrar venta
-        public function registrarVenta($itemsCarrito, $clienteId, $medioPagoId)
+    public function registrarVenta($itemsCarrito, $clienteId, $medioPagoId)
     {
         $db = \Config\Database::connect();
         $db->transStart();
 
-        $ventaId = $this->crearVenta($clienteId, $medioPagoId);
+        try {
+            // Validar stock antes de crear la venta (lanza ValidationException en caso de errores de validación)
+            $this->validarStock($itemsCarrito);
 
-        if (!$ventaId) {
+            $ventaId = $this->crearVenta($clienteId, $medioPagoId);
+
+            if (!$ventaId) {
+                throw new \Exception('Error al crear la venta.');
+            }
+
+            // Pasamos medioPagoId a crearDetallesVenta para aplicar la estrategia de descuento
+            $this->crearDetallesVenta($ventaId, $itemsCarrito, $medioPagoId);
+
+            $this->actualizarStock($itemsCarrito);
+
+            $db->transComplete();
+            return true;
+        } catch (\Exception $ex) {
             $db->transRollback();
+            // En caso de ValidationException u otra excepción, se realiza rollback y se propaga o devuelve false según uso actual.
             return false;
         }
-        $resultadoDetalles= $this->crearDetallesVenta($ventaId, $itemsCarrito);
-         if (!$ResultadoDetalles) {
-            $db->transRollback();
-            return false;
-        }
-        $resultadoActulizarStock=  $this->actualizarStock($itemsCarrito);
-         if (!$resultadoActulizarStock) {
-            $db->transRollback();
-            return false;
-        }
-        $db->transComplete();
-        return true;
     }
 
 
     /**
-     * 🔹 Verificar stock
+     *  Verificar stock
+     *  Obtiene ProductoService desde ServiceContainer y lanza ValidationException con array de errores
      */
-    public function validarStock($cartItems, $productoModel)
+    public function validarStock($cartItems)
     {
-        foreach ($cartItems as $item) {
+        $productoService = ServiceContainer::getInstancia()->get(ProductoService::class);
 
-            $producto = $productoModel->find($item['id']);
+        $errores = [];
+
+        foreach ($cartItems as $item) {
+            $producto = $productoService->obtenerPorId($item['id']);
 
             if (!$producto) {
-                return 'Uno de los productos no existe.';
+                $errores['producto_' . $item['id']] = 'El producto no existe (id: ' . $item['id'] . ').';
+                continue;
             }
 
             if ($producto['stock_producto'] < $item['qty']) {
-                return 'Stock insuficiente para el producto: ' . $producto['nombre_producto'];
+                $errores['stock_' . $item['id']] = 'Stock insuficiente para el producto: ' . $producto['nombre_producto'];
             }
         }
 
-        return null;
+        if (!empty($errores)) {
+            throw new ValidationException($errores);
+        }
+
+        return true;
     }
 
     /**
-     * 🔹 Registrar venta completa
+     *  Registrar venta completa
      */
     public function crearVenta($clienteId, $medioPagoId) 
-        {
+    {
         $ventaModel = new \App\Models\venta_model();
 
         // Crear venta
         $ventaData = [
-        'cliente_id'    => $clienteId,
-        'fecha_venta'   => date('Y-m-d'),
-        'medio_pago_id' => $medioPagoId
-         ];
+            'cliente_id'    => $clienteId,
+            'fecha_venta'   => date('Y-m-d'),
+            'medio_pago_id' => $medioPagoId
+        ];
 
-         $ventaId = $ventaModel->insert($ventaData, true);
+        $ventaId = $ventaModel->insert($ventaData, true);
 
-         if (!$ventaId) {
-             return null; // Error al crear la venta
-         }
-         return $ventaId
+        if (!$ventaId) {
+            return null;
+        }
+
+        return $ventaId;
     }
 
-    private function crearDetallesVenta($ventaId, $itemsCarrito)
-{
-    $detalleModel = new \App\Models\detalle_venta_model();
+    /**
+     * Crear los detalles de venta (antes privado). Lanza excepciones en caso de fallo.
+     */
+    public function crearDetallesVenta($ventaId, $itemsCarrito, $medioPagoId)
+    {
+        $detalleModel = new \App\Models\detalle_venta_model();
 
-    foreach ($itemsCarrito as $item) {
-       $detalleId= $detalleModel->insert([
-            'venta_id'         => $ventaId,
-            'producto_id'      => $item['id'],
-            'detalle_cantidad' => $item['qty'],
-            'detalle_precio'   => $item['price']
-        ]);
+        // Obtener la estrategia de descuento según el medio de pago
+        $strategy = DescuentoFactory::crearPorMedioPagoId($medioPagoId);
+
+        foreach ($itemsCarrito as $item) {
+            $precioUnitario = floatval($item['price']);
+
+            // Aplicar descuento mediante la estrategia
+            $precioConDescuento = $strategy->aplicarDescuento($precioUnitario);
+
+            $detallePayload = [
+                'venta_id'         => $ventaId,
+                'producto_id'      => $item['id'],
+                'detalle_cantidad' => $item['qty'],
+                'detalle_precio'   => $precioConDescuento
+            ];
+
+            $detalleId = $detalleModel->insert($detallePayload);
+            if (!$detalleId) {
+                throw new \Exception('Error al crear el detalle de venta para el producto id: ' . $item['id']);
+            }
+        }
+
+        return true;
     }
-}
 
     private function actualizarStock($itemsCarrito)
     {
-    $productoModel = new \App\Models\producto_model();
+        /** @var ProductoService $productoService */
+        $productoService = ServiceContainer::getInstancia()->get(ProductoService::class);
 
-    foreach ($itemsCarrito as $item) {
-        $producto = $productoModel->obtenerPorId($item['id']);
+        $errores = [];
 
-        if ($producto) {
+        foreach ($itemsCarrito as $item) {
+            $producto = $productoService->obtenerPorId($item['id']);
+
+            if (!$producto) {
+                $errores['producto_' . $item['id']] = 'Producto no encontrado al actualizar stock, id: ' . $item['id'];
+                continue;
+            }
+
             $nuevoStock = $producto['stock_producto'] - $item['qty'];
 
-            $productoModel->update($item['id'], [
-                'stock_producto' => $nuevoStock
-            ]);
+            $datosActualizar = [
+                'nombre'      => $producto['nombre_producto'],
+                'descripcion' => $producto['descripcion_producto'],
+                'precio'      => $producto['precio_producto'],
+                'stock'       => $nuevoStock,
+                'categoria'   => $producto['categoria_producto'],
+            ];
+
+            $updated = $productoService->actualizar($item['id'], $datosActualizar);
+
+            if ($updated === false) {
+                $errores['update_' . $item['id']] = 'Error al actualizar stock para el producto id: ' . $item['id'];
+            }
         }
-    }
+
+        if (!empty($errores)) {
+            throw new ValidationException($errores);
+        }
+
+        return true;
     }
 
     // Obtener todas las ventas 

@@ -3,6 +3,7 @@
 namespace App\Controllers;
 use App\Models\producto_model; 
 use App\Models\categoria_model;
+use App\Services\ValidationException;
 
 class ProductoController extends BaseController{
 
@@ -38,12 +39,16 @@ public function registrarProducto() {
     $imagen = $request->getFile('imagen');
 
     //Llamada al servicio para validar los datos del producto
-    $errores = $this->productoService->validarDatos($datos, $imagen);
-
-    if (!empty($errores)) {
-        //Si hay errores de validación, se los muestra al usuario
-        return redirect()->back()->withInput()->with('errores', $errores);
+    try {
+        $this->productoService->validarDatos($datos, $imagen);
+    } catch (ValidationException $ve) {
+        // Mostrar errores de validación (array)
+        return redirect()->back()->withInput()->with('errores', $ve->getErrors());
+    } catch (\Exception $ex) {
+        // Error inesperado
+        return redirect()->back()->withInput()->with('mensaje', $ex->getMessage());
     }
+
     //Si no hay errores de validación, se llama al servicio para insertar el producto
     $this->productoService->insertar($datos, $imagen);
     
@@ -72,17 +77,16 @@ public function editarProducto($id = null) {
         $imagen = $request->getFile('imagen');
 
         //Llamada al servicio para validar los datos del producto
-    $errores = $this->productoService->validarDatos($datos, $imagen);
-
-    if (!empty($errores)) {
-        //Si hay errores de validación, se los muestra al usuario
-        return redirect()->back()->withInput()->with('errores', $errores);
+    try {
+        $this->productoService->validarDatos($datos, $imagen);
+    } catch (ValidationException $ve) {
+        return redirect()->back()->withInput()->with('errores', $ve->getErrors());
+    } catch (\Exception $ex) {
+        return redirect()->back()->withInput()->with('mensaje', $ex->getMessage());
     }
 
      //Si no hay errores de validación, se llama al servicio para actualizar el producto
     $this->productoService->actualizar($id, $datos, $imagen);
-
-   
 
     //Si el producto se editó correctamente, se muestra un mensaje de éxito
      return redirect()->back()->with('mensaje', 'Producto editado con éxito');
@@ -114,7 +118,7 @@ public function editarProducto($id = null) {
         $data['categoria'] = $categoria->obtenerCategorias();
 
         $query = $producto->select('producto.*, categoria.descripcion_categoria')
-                        ->join('categoria', 'categoria.id_categoria = producto.categoria_producto');
+                        .join('categoria', 'categoria.id_categoria = producto.categoria_producto');
 
         if (!empty($busqueda)) {
             $query->like('nombre_producto', $busqueda);
