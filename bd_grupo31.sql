@@ -156,6 +156,35 @@ CREATE TABLE `venta` (
   `medio_pago_id` int(11) NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
+-- =========================================
+-- PROCEDIMIENTOS ALMACENADOS
+-- =========================================
+
+DELIMITER $$
+
+CREATE PROCEDURE sp_buscar_productos(
+    IN p_nombre VARCHAR(150)
+)
+BEGIN
+    SELECT p.*, c.descripcion_categoria
+    FROM producto p
+    INNER JOIN categoria c
+        ON c.id_categoria = p.categoria_producto
+    WHERE p.nombre_producto LIKE CONCAT('%', p_nombre, '%');
+END$$
+
+CREATE PROCEDURE sp_actualizar_stock(
+    IN p_id_producto INT,
+    IN p_cantidad INT
+)
+BEGIN
+    UPDATE producto
+    SET stock_producto = stock_producto - p_cantidad
+    WHERE id_producto = p_id_producto;
+END$$
+
+DELIMITER ;
+
 --
 -- Índices para tablas volcadas
 --

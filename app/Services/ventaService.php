@@ -128,35 +128,16 @@ class VentaService
 
     private function actualizarStock($itemsCarrito)
     {
-        /** @var ProductoService $productoService */
-        $productoService = ServiceContainer::getInstancia()->get(ProductoService::class);
-
-        $errores = [];
+        $productoService = ServiceContainer::getInstancia()
+        ->get(ProductoService::class);
 
         foreach ($itemsCarrito as $item) {
-            $producto = $productoService->obtenerPorId($item['id']);
 
-            if (!$producto) {
-                $errores['producto_' . $item['id']] = 'Producto no encontrado al actualizar stock, id: ' . $item['id'];
-                continue;
-            }
-
-            $nuevoStock = $producto['stock_producto'] - $item['qty'];
-
-            $datosActualizar = [
-                'nombre'      => $producto['nombre_producto'],
-                'descripcion' => $producto['descripcion_producto'],
-                'precio'      => $producto['precio_producto'],
-                'stock'       => $nuevoStock,
-                'categoria'   => $producto['categoria_producto'],
-            ];
-
-            $updated = $productoService->actualizar($item['id'], $datosActualizar);
-
-            if ($updated === false) {
-                $errores['update_' . $item['id']] = 'Error al actualizar stock para el producto id: ' . $item['id'];
-            }
-        }
+        $productoService->descontarStock(
+            $item['id'],
+            $item['qty']
+        );
+    }
 
         if (!empty($errores)) {
             throw new ValidationException($errores);
