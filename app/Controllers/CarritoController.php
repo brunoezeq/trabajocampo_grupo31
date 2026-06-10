@@ -41,16 +41,16 @@ class CarritoController extends BaseController
         // Validaciones
         if (empty($itemsCarrito)) {
             return redirect()->to('verCarrito')
-                             ->with('mensaje', 'El carrito está vacío.');
+                             ->with('mensaje', 'El carrito estï¿½ vacï¿½o.');
         }
 
         $medioPago = $this->request->getPost('medio_pago');
-        if (empty($medioPago)) {
+        if (empty($medioPagoId)) {
             return redirect()->back()
                              ->with('mensaje', 'Debe seleccionar un medio de pago.');
         }
 
-        // Validar stock usando el método que ahora está en CarritoService
+        // Validar stock usando el mï¿½todo que ahora estï¿½ en CarritoService
         try {
             $this->carritoService->validarStock($itemsCarrito);
         } catch (ValidationException $ve) {
@@ -64,16 +64,16 @@ class CarritoController extends BaseController
         }
 
         // Delegar el registro a VentaController::registrarVenta
-        try {
+        try { 
             $idUsuario = session('id_usuario');
 
             // Crear instancia del controlador de ventas y delegar
             $ventaController = new \App\Controllers\VentaController();
-            $resultado = $ventaController->registrarVenta($itemsCarrito, $idUsuario, $medioPago);
+            $resultado = $ventaController->registrarVenta($itemsCarrito, $clienteId, $medioPagoId);
 
             if ($resultado === false) {
                 return redirect()->to('mostrarCarrito')
-                                 ->with('mensaje', 'Error al registrar la compra, inténtelo nuevamente.');
+                                 ->with('mensaje', 'Error al registrar la compra, intï¿½ntelo nuevamente.');
             }
         } catch (ValidationException $ve) {
             return redirect()->to('mostrarCarrito')
@@ -126,10 +126,10 @@ class CarritoController extends BaseController
 
        if (!$productoEliminado) {
            return redirect()->to('verCarrito')
-                            ->with('mensaje', 'No se encontró el item en el carrito.');
+                            ->with('mensaje', 'No se encontrï¿½ el item en el carrito.');
        }
        return redirect()->to('verCarrito')
-                        ->with('mensaje', 'Se eliminó el item del carrito.');
+                        ->with('mensaje', 'Se eliminï¿½ el item del carrito.');
     }
 
     // Vaciar carrito
