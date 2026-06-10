@@ -1,12 +1,11 @@
 <?php
 // Script para ejecutar tests seleccionados varias veces y registrar resultados en una tabla Markdown.
-// Ahora evita usar el comando "php" sin ruta en Windows; usa PHP_BINARY o la ruta de XAMPP.
+// Ejecuta exactamente 20 iteraciones y escribe la salida completa en el archivo results.md.
 //
-// Uso: php run_tests_repeat.php [iteraciones]
-// Ejemplo: php run_tests_repeat.php 20
+# Uso: php run_tests_repeat.php
+# Nota: Las iteraciones están fijadas en 20 por diseño.
 
-$iterations = $argv[1] ?? 10;
-$iterations = max(1, intval($iterations));
+$iterations = 20; // fijado a 20 repeticiones
 
 $tests = [
     [
@@ -60,9 +59,6 @@ $vendorPhpUnit = __DIR__ . '/../../vendor/bin/phpunit';
 $vendorPhpUnitBat = __DIR__ . '/../../vendor/bin/phpunit.bat';
 
 // Construir comando seguro para invocar phpunit:
-//  - en Windows preferimos el .bat (si existe).
-//  - si existe el script *nix (vendor/bin/phpunit) lo llamamos con el mismo PHP que ejecuta este script (PHP_BINARY).
-//  - si no se encuentra nada, usamos PHP_BINARY o la ruta de XAMPP como ejecutable y apuntamos al posible path de phpunit.
 if (file_exists($vendorPhpUnitBat)) {
     $phpunitCmd = escapeshellarg($vendorPhpUnitBat);
 } elseif (file_exists($vendorPhpUnit)) {
@@ -104,12 +100,11 @@ for ($i = 1; $i <= $iterations; $i++) {
         );
         file_put_contents($resultsPath, $line, FILE_APPEND);
 
-        // Añadir bloque plegable con la salida completa (formato seguro en Markdown)
-        $detailHeader = sprintf("\n<details>\n<summary>Detalle de salida (%s) - %d ms</summary>\n\n", $filter, $duration);
+        // Añadir bloque con la salida completa (SIN <details>, solo texto)
+        $detailHeader = sprintf("\n**Salida completa (%s) - %d ms**\n\n", $filter, $duration);
         $detailBody = "```text\n" . $output . "\n```\n\n";
-        $detailClose = "</details>\n\n";
 
-        file_put_contents($resultsPath, $detailHeader . $detailBody . $detailClose, FILE_APPEND);
+        file_put_contents($resultsPath, $detailHeader . $detailBody, FILE_APPEND);
 
         // Limpiar salida para la siguiente ejecución
         $outputLines = [];
