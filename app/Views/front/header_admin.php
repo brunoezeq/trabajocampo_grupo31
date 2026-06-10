@@ -35,7 +35,7 @@
             <a class="nav-link" href="<?= base_url('gestionarProductos') ?>">Gestionar Producto</a>
           </li>
           <li class="nav-item">
-            <a class="nav-link" href="<?= base_url('verVentas') ?>">Ver Ventas</a>
+            <a class="nav-link" href="<?= base_url('mostrarVentas') ?>">Ver Ventas</a>
           </li>
           <li class="nav-item">
             <a class="nav-link" href="#"><i class="bi bi-person"></i> <?= session('usuario_usuario') ?></a>

@@ -52,18 +52,7 @@
 
         <?= form_open('comprarCarrito') ?>
         <div class="row">
-            <div class="col-md-6 mb-2">
-                <label for="documento">Documento:</label>
-                <?= form_input('documento', set_value('documento'), ['class' => 'form-control', 'id' => 'documento']) ?>
-            </div>
-            <div class="col-md-6 mb-2">
-                <label for="celular">Celular:</label>
-                <?= form_input('celular', set_value('celular'), ['class' => 'form-control', 'id' => 'celular']) ?>
-            </div>
-            <div class="col-md-12 mb-2">
-                <label for="domicilio">Domicilio:</label>
-                <?= form_input('domicilio', set_value('domicilio'), ['class' => 'form-control', 'id' => 'domicilio']) ?>
-            </div>
+            
             <div class="col-md-12 mb-3">
                 <label for="medio_pago">Medio de Pago:</label>
                 <?php
