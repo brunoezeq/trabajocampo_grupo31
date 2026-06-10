@@ -28,13 +28,6 @@ class ProductoService {
         return $this->model->insert($datosProducto);
     }
 
-    public function obtenerTodos($busqueda = null) {
-        if ($busqueda) {
-            return $this->model->like('nombre_producto', $busqueda)->findAll();
-        }
-        return $this->model->findAll();
-    }
-
     public function obtenerPorId($id) {
         return $this->model->find($id);
     }
@@ -110,6 +103,27 @@ public function validarDatos($datos, $imagen = null) {
         }
 
         return true;
+    }
+
+   public function obtenerProductos($busqueda = null)
+    {
+    if (!empty($busqueda)) {
+        $db = \Config\Database::connect();
+
+        $query = $db->query(
+            "CALL sp_buscar_productos(?)",
+            [$busqueda]
+        );
+
+        return $query->getResultArray();
+    }
+
+    $productoModel = new \App\Models\producto_model();
+
+    return $productoModel
+        ->select('producto.*, categoria.descripcion_categoria')
+        ->join('categoria', 'categoria.id_categoria = producto.categoria_producto')
+        ->findAll();
     }
 
 }

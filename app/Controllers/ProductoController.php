@@ -108,30 +108,20 @@ public function editarProducto($id = null) {
         return redirect()->back()->with('mensaje', 'Producto activado con éxito');
     }
 
-    public function gestionarProductos(){
+    public function gestionarProductos()
+    {
+    $busqueda = $this->request->getGet('busqueda');
 
-        $producto = new producto_model();
-        $categoria = new categoria_model();
+    $data = [
+        'titulo'    => 'Gestionar Producto',
+        'busqueda'  => $busqueda,
+        'producto'  => $this->productoService->obtenerProductos($busqueda),
+        'categoria' => $this->categoriaService->obtenerTodas()
+    ];
 
-        $busqueda = $this->request->getGet('busqueda');
-      
-        $data['categoria'] = $categoria->obtenerCategorias();
-
-        $query = $producto->select('producto.*, categoria.descripcion_categoria')
-                        .join('categoria', 'categoria.id_categoria = producto.categoria_producto');
-
-        if (!empty($busqueda)) {
-            $query->like('nombre_producto', $busqueda);
-        }
-
-        $data['producto'] = $query->findAll();
-
-        $data['busqueda'] = $busqueda;
-        $data['titulo'] = 'Gestionar Producto';
-
-        return view('front/header_admin', $data)
-            . view('backend/gestionarProductos', $data)
-            . view('front/footer_admin');
+    return view('front/header_admin', $data)
+         . view('backend/gestionarProductos', $data)
+         . view('front/footer_admin');
     }
 
     public function mostrarCatalogo(){
@@ -181,6 +171,16 @@ public function editarProducto($id = null) {
         }
 
         return $builder->get()->getResultArray();
+    }
+
+    public function descontarStock($idProducto, $cantidad)
+    {
+    $db = \Config\Database::connect();
+
+    $db->query(
+        "CALL sp_actualizar_stock(?, ?)",
+        [$idProducto, $cantidad]
+    );
     }
 
 }
