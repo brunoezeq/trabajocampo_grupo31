@@ -86,6 +86,29 @@ class TestableVentaService extends \App\Services\VentaService
  */
 final class VentaServiceTest extends TestCase
 {
+    private static int $runSeed;
+
+    public static function setUpBeforeClass(): void
+    {
+        // Prioriza la variable de entorno TEST_RUN_SEED si está presente (setiada por el script de ejecución)
+        $env = getenv('TEST_RUN_SEED');
+        if ($env !== false) {
+            self::$runSeed = (int) $env;
+        } else {
+            self::$runSeed = (int) (microtime(true) * 1000) % 1000000;
+        }
+    }
+
+    private static function runId(int $offset = 0): int
+    {
+        return self::$runSeed + $offset;
+    }
+
+    private static function runPrice(int $id): float
+    {
+        return round(1.0 + ($id % 97) / 10, 2);
+    }
+
     public function testCrearVentaDevuelveIdCuandoInsertOk()
     {
         $ventaModelMock = $this->getMockBuilder(\App\Models\venta_model::class)
@@ -100,7 +123,10 @@ final class VentaServiceTest extends TestCase
         $service = new TestableVentaService();
         $service->ventaModel = $ventaModelMock;
 
-        $id = $service->crearVenta(7, 2);
+        $clienteId = self::runId(7);
+        $medioPagoId = self::runId(2);
+
+        $id = $service->crearVenta($clienteId, $medioPagoId);
 
         $this->assertEquals(42, $id);
     }
@@ -119,7 +145,10 @@ final class VentaServiceTest extends TestCase
         $service = new TestableVentaService();
         $service->ventaModel = $ventaModelMock;
 
-        $id = $service->crearVenta(10, 2);
+        $clienteId = self::runId(10);
+        $medioPagoId = self::runId(2);
+
+        $id = $service->crearVenta($clienteId, $medioPagoId);
 
         $this->assertEquals(55, $id);
     }
@@ -138,7 +167,10 @@ final class VentaServiceTest extends TestCase
         $service = new TestableVentaService();
         $service->ventaModel = $ventaModelMock;
 
-        $id = $service->crearVenta(1, 1);
+        $clienteId = self::runId(1);
+        $medioPagoId = self::runId(1);
+
+        $id = $service->crearVenta($clienteId, $medioPagoId);
 
         $this->assertNull($id);
     }
@@ -158,7 +190,7 @@ final class VentaServiceTest extends TestCase
         $service = new TestableVentaService();
         $service->ventaModel = $ventaModelMock;
 
-        $id = $service->crearVenta(null, 1);
+        $id = $service->crearVenta(null, self::runId(1));
 
         $this->assertNull($id);
     }
@@ -177,7 +209,7 @@ final class VentaServiceTest extends TestCase
         $service = new TestableVentaService();
         $service->ventaModel = $ventaModelMock;
 
-        $id = $service->crearVenta(5, null);
+        $id = $service->crearVenta(self::runId(5), null);
 
         $this->assertNull($id);
     }
@@ -196,8 +228,8 @@ final class VentaServiceTest extends TestCase
         $service = new TestableVentaService();
         $service->ventaModel = $ventaModelMock;
 
-        $this->assertNull($service->crearVenta(-1, 1));
-        $this->assertNull($service->crearVenta(5, -1));
+        $this->assertNull($service->crearVenta(-1, self::runId(1)));
+        $this->assertNull($service->crearVenta(self::runId(5), -1));
     }
 
     public function testCrearVentaDevuelveNullCuandoClienteOmedioInexistenteEnBD()
@@ -215,8 +247,8 @@ final class VentaServiceTest extends TestCase
         $service = new TestableVentaService();
         $service->ventaModel = $ventaModelMock;
 
-        $this->assertNull($service->crearVenta(9999, 1));
-        $this->assertNull($service->crearVenta(5, 9999));
+        $this->assertNull($service->crearVenta(self::runId(9999), self::runId(1)));
+        $this->assertNull($service->crearVenta(self::runId(5), self::runId(9999)));
     }
 
     public function testCrearVentaDevuelveNullCuandoInsertLanzaExcepcion()
@@ -233,18 +265,19 @@ final class VentaServiceTest extends TestCase
         $service = new TestableVentaService();
         $service->ventaModel = $ventaModelMock;
 
-        $id = $service->crearVenta(5, 1);
+        $id = $service->crearVenta(self::runId(5), self::runId(1));
 
         $this->assertNull($id);
     }
-
+        
     // ---------------------------------------------------------
     // Pruebas para registrarVenta 
     // ---------------------------------------------------------
     public function testRegistrarVentaDevuelveTrueCuandoTodoOk()
     {
+        $pid = self::runId(10);
         $items = [
-            ['id' => 10, 'qty' => 1, 'price' => 20.0]
+            ['id' => $pid, 'qty' => 1, 'price' => self::runPrice($pid)]
         ];
 
         $service = new TestableVentaService();
@@ -269,15 +302,16 @@ final class VentaServiceTest extends TestCase
             return true;
         };
 
-        $res = $service->registrarVenta($items, 3, 1);
+        $res = $service->registrarVenta($items, self::runId(3), self::runId(1));
 
         $this->assertTrue($res);
     }
 
     public function testRegistrarVentaUnSoloProductoValidoRetornaTrue()
     {
+        $pid = self::runId(20);
         $items = [
-            ['id' => 20, 'qty' => 1, 'price' => 10.0]
+            ['id' => $pid, 'qty' => 1, 'price' => self::runPrice($pid)]
         ];
 
         $service = new TestableVentaService();
@@ -298,7 +332,7 @@ final class VentaServiceTest extends TestCase
             return true;
         };
 
-        $res = $service->registrarVenta($items, 4, 2);
+        $res = $service->registrarVenta($items, self::runId(4), self::runId(2));
 
         $this->assertTrue($res);
     }
@@ -317,15 +351,16 @@ final class VentaServiceTest extends TestCase
             return true;
         };
 
-        $res = $service->registrarVenta($items, 5, 1);
+        $res = $service->registrarVenta($items, self::runId(5), self::runId(1));
 
         $this->assertFalse($res);
     }
 
     public function testRegistrarVentaMedioPagoNoSeleccionadoRetornaFalse()
     {
+        $pid = self::runId(30);
         $items = [
-            ['id' => 30, 'qty' => 1, 'price' => 15.0]
+            ['id' => $pid, 'qty' => 1, 'price' => self::runPrice($pid)]
         ];
 
         $service = new TestableVentaService();
@@ -342,15 +377,16 @@ final class VentaServiceTest extends TestCase
             return 200;
         };
 
-        $res = $service->registrarVenta($items, 5, null);
+        $res = $service->registrarVenta($items, self::runId(5), null);
 
         $this->assertFalse($res);
     }
 
     public function testRegistrarVentaMedioPagoInexistenteRetornaFalse()
     {
+        $pid = self::runId(40);
         $items = [
-            ['id' => 40, 'qty' => 1, 'price' => 25.0]
+            ['id' => $pid, 'qty' => 1, 'price' => self::runPrice($pid)]
         ];
 
         $service = new TestableVentaService();
@@ -364,15 +400,16 @@ final class VentaServiceTest extends TestCase
             return null;
         };
 
-        $res = $service->registrarVenta($items, 5, 99);
+        $res = $service->registrarVenta($items, self::runId(5), self::runId(99));
 
         $this->assertFalse($res);
     }
 
     public function testRegistrarVentaCrearDetallesFallaRetornaFalse()
     {
+        $pid = self::runId(50);
         $items = [
-            ['id' => 50, 'qty' => 1, 'price' => 30.0]
+            ['id' => $pid, 'qty' => 1, 'price' => self::runPrice($pid)]
         ];
 
         $service = new TestableVentaService();
@@ -390,15 +427,16 @@ final class VentaServiceTest extends TestCase
             throw new \Exception('Error crear detalles');
         };
 
-        $res = $service->registrarVenta($items, 5, 1);
+        $res = $service->registrarVenta($items, self::runId(5), self::runId(1));
 
         $this->assertFalse($res);
     }
 
     public function testRegistrarVentaActualizarStockFallaRetornaFalse()
     {
+        $pid = self::runId(60);
         $items = [
-            ['id' => 60, 'qty' => 1, 'price' => 5.0]
+            ['id' => $pid, 'qty' => 1, 'price' => self::runPrice($pid)]
         ];
 
         $service = new TestableVentaService();
@@ -420,7 +458,7 @@ final class VentaServiceTest extends TestCase
             throw new \Exception('Error actualizar stock');
         };
 
-        $res = $service->registrarVenta($items, 5, 1);
+        $res = $service->registrarVenta($items, self::runId(5), self::runId(1));
 
         $this->assertFalse($res);
     }

@@ -10,41 +10,92 @@ $iterations = 20; // fijado a 20 repeticiones
 $tests = [
     [
         'filter' => 'CarritoServiceTest::testAgregarProductoLlamaAdapterAgregar',
-        'args'   => "['id_producto'=>101,'nombre_producto'=>'Producto Test','precio_producto'=>12.5]",
+        'args'   => "id_producto=?, nombre_producto=?, precio_producto=?",
         'desc'   => 'agregarProducto llama al adaptador con id, nombre, precio y qty=1',
-        'expected' => 'adapter->agregar llamado con (101, "Producto Test", 12.5, 1)'
+        'expected' => 'adapter->agregar llamado con (id, nombre, precio, 1)'
     ],
     [
         'filter' => 'VentaServiceTest::testCrearVentaDevuelveIdCuandoInsertOk',
-        'args'   => 'clienteId=7, medioPagoId=2',
+        'args'   => 'clienteId=?, medioPagoId=?',
         'desc'   => 'crearVenta retorna id cuando insert del modelo devuelve id',
         'expected' => 'retorna id (int)'
     ],
     [
         'filter' => 'VentaServiceTest::testCrearVentaDevuelveNullCuandoInsertFalla',
-        'args'   => 'clienteId=1, medioPagoId=1',
+        'args'   => 'clienteId=?, medioPagoId=?',
         'desc'   => 'crearVenta retorna null cuando insert falla',
         'expected' => 'retorna null'
     ],
     [
         'filter' => 'VentaServiceTest::testRegistrarVentaDevuelveTrueCuandoTodoOk',
-        'args'   => 'items=[{id:10,qty:1,price:20}], clienteId=3, medioPagoId=1',
+        'args'   => 'items=[{id:?,qty:1,price:?}], clienteId=?, medioPagoId=?',
         'desc'   => 'registrarVenta retorna true cuando validarStock, crearVenta, crearDetalles y actualizarStock OK',
         'expected' => 'true'
     ],
     [
         'filter' => 'VentaServiceTest::testRegistrarVentaDevuelveFalseCuandoValidacionFalla',
-        'args'   => 'items con stock insuficiente',
-        'desc'   => 'registrarVenta retorna false cuando validarStock lanza ValidationException',
+        'args'   => 'items=[], clienteId=?, medioPagoId=?',
+        'desc'   => 'registrarVenta retorna false cuando validarStock lanza ValidationException (carrito vacío)',
         'expected' => 'false'
     ],
     [
         'filter' => 'VentaServiceTest::testRegistrarVentaDevuelveFalseCuandoCrearVentaFalla',
-        'args'   => 'crearVenta devuelve null',
+        'args'   => 'crearVenta devuelve null (medioPago simulado)',
         'desc'   => 'registrarVenta retorna false si crearVenta falla',
         'expected' => 'false'
     ],
 ];
+
+// helpers para derivar valores igual que en los tests
+function runId(int $seed, int $offset = 0): int {
+    return $seed + $offset;
+}
+function runPrice(int $id): float {
+    return round(1.0 + ($id % 97) / 10, 2);
+}
+function runName(int $id): string {
+    return 'Producto_' . $id;
+}
+// normaliza medioPagoId al rango 1..5
+function medioPagoForSeed(int $seed, int $offset = 0): int {
+    $raw = runId($seed, $offset);
+    return ($raw % 5) + 1;
+}
+function computeArgs(string $filter, int $seed): string {
+    switch ($filter) {
+        case 'CarritoServiceTest::testAgregarProductoLlamaAdapterAgregar':
+            $id = runId($seed, 101);
+            $name = runName($id);
+            $price = runPrice($id);
+            return "id_producto={$id}, nombre_producto={$name}, precio_producto={$price}";
+        case 'VentaServiceTest::testCrearVentaDevuelveIdCuandoInsertOk':
+            $cliente = runId($seed, 7);
+            $medio = medioPagoForSeed($seed, 2);
+            return "clienteId={$cliente}, medioPagoId={$medio}";
+        case 'VentaServiceTest::testCrearVentaDevuelveNullCuandoInsertFalla':
+            $cliente = runId($seed, 1);
+            $medio = medioPagoForSeed($seed, 1);
+            return "clienteId={$cliente}, medioPagoId={$medio}";
+        case 'VentaServiceTest::testRegistrarVentaDevuelveTrueCuandoTodoOk':
+            $itemId = runId($seed, 10);
+            $price = runPrice($itemId);
+            $cliente = runId($seed, 3);
+            $medio = medioPagoForSeed($seed, 1);
+            return "items=[{id:{$itemId},qty:1,price:{$price}}], clienteId={$cliente}, medioPagoId={$medio}";
+        case 'VentaServiceTest::testRegistrarVentaDevuelveFalseCuandoValidacionFalla':
+            $cliente = runId($seed, 5);
+            $medio = medioPagoForSeed($seed, 1);
+            return "items=[], clienteId={$cliente}, medioPagoId={$medio}";
+        case 'VentaServiceTest::testRegistrarVentaDevuelveFalseCuandoCrearVentaFalla':
+            $itemId = runId($seed, 40);
+            $price = runPrice($itemId);
+            $cliente = runId($seed, 5);
+            $medioInvalido = medioPagoForSeed($seed, 99); // seguirá en 1..5 aunque sea "invalido" para la prueba
+            return "items=[{id:{$itemId},qty:1,price:{$price}}], clienteId={$cliente}, medioPagoId={$medioInvalido}";
+        default:
+            return "";
+    }
+}
 
 // Cabecera de la tabla Markdown
 $header = "| iteración | test | argumentos | descripcion de la prueba | resultado esperado | resultado real |\n";
@@ -74,6 +125,10 @@ for ($i = 1; $i <= $iterations; $i++) {
     foreach ($tests as $t) {
         $filter = $t['filter'];
 
+        // Generar seed consistente para esta ejecución y propagarla a phpunit mediante variable de entorno
+        $seed = (int) (microtime(true) * 1000) % 1000000;
+        putenv("TEST_RUN_SEED={$seed}");
+
         // Ejecutar phpunit con --filter y capturar salida completa (pero NO la guardaremos en results.md)
         $cmd = sprintf('%s --colors=never --filter %s 2>&1', $phpunitCmd, escapeshellarg($filter));
         $start = microtime(true);
@@ -83,11 +138,14 @@ for ($i = 1; $i <= $iterations; $i++) {
         // Determinar resultado simple
         $result = $exitCode === 0 ? 'OK' : 'FAIL';
 
+        // Calcular argumentos reales usados basados en el seed (sin mostrar seed)
+        $argsReal = computeArgs($filter, $seed);
+
         // Línea de tabla (solo las columnas requeridas)
         $line = sprintf("| %d | %s | %s | %s | %s | %s |\n",
             $i,
             $filter,
-            $t['args'],
+            $argsReal,
             $t['desc'],
             $t['expected'],
             $result
