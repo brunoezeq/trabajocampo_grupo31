@@ -2,16 +2,17 @@
 
 namespace App\Services;
 
+use App\Services\ValidationException;
 use App\Services\ServiceContainer;
 use App\Services\ProductoService;
-use App\Services\ValidationException;
+use App\Interfaces\CarritoInterface;
 
 class CarritoService
 {
-     protected $cartAdapter;
+    protected $cartAdapter;
 
-    // Inyectamos la interfaz del carrito de un framwework específico
-    public function __construct(carritoInterface $cartAdapter)
+    // Inyectamos la interfaz del carrito de un framework específico
+    public function __construct(CarritoInterface $cartAdapter)
     {
         $this->cartAdapter = $cartAdapter;
     }
@@ -85,8 +86,8 @@ class CarritoService
         return true;
     }
 
-  // Agrega el producto al carrito
-  public function agregarProducto($producto)
+    // Agrega el producto al carrito
+    public function agregarProducto($producto)
     {
         // Usamos el adaptador
         $this->cartAdapter->agregar(
@@ -97,20 +98,21 @@ class CarritoService
         );
     }
 
-   // Eliminar producto del carrito por su ID de producto
- public function eliminarPorId($id_producto)
+    // Eliminar producto del carrito por su ID de producto
+    public function eliminarPorId($id_producto)
     {
         return $this->cartAdapter->eliminar($id_producto);
     }
 
     // Vaciar carrito y todos sus items
-public function destruirCarrito()
+    public function destruirCarrito()
     {
         $this->cartAdapter->vaciar();
     }
 
-//Obtener todos los items cargados en el carrito
- public function obtenerItems()
+    // Obtener todos los items cargados en el carrito
+    public function obtenerItems()
     {
         return $this->cartAdapter->obtenerContenido();
     }
+}

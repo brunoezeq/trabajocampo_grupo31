@@ -24,8 +24,12 @@ class CodeIgniterCartAdapter implements CarritoInterface
         ]);
     }
 
-   foreach ($this->obtenerContenido() as $item) {
+    public function eliminar($id)
+    {
+        // Recorre el contenido y elimina el item que coincida por id
+        foreach ($this->obtenerContenido() as $item) {
             if ($item['id'] == $id) {
+                // remove espera rowid
                 $this->cart->remove($item['rowid']);
                 return true;
             }
@@ -38,10 +42,10 @@ class CodeIgniterCartAdapter implements CarritoInterface
         $this->cart->destroy();
     }
 
-     public function obtenerContenido(): array
+    public function obtenerContenido(): array
     {
         $contents = $this->cart->contents();
-        // Aseguramos que si contents() devuelve null/false, se transforme en un array vacío []
+        // Aseguramos que si contents() devuelve null/false, se transforme en un array vacío
         return is_array($contents) ? $contents : [];
     }
 }

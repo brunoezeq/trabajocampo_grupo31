@@ -126,7 +126,7 @@ class VentaService
         return true;
     }
 
-    private function actualizarStock($itemsCarrito)
+    public function actualizarStock($itemsCarrito)
     {
         /** @var ProductoService $productoService */
         $productoService = ServiceContainer::getInstancia()->get(ProductoService::class);

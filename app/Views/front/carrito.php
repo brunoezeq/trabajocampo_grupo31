@@ -36,7 +36,7 @@
                             <td><?= esc($item['qty']) ?></td>
                             <td>$<?= number_format($item['subtotal'], 2) ?></td>
                             <td>
-                                <a href="<?= base_url('eliminarItem/'.$item['rowid']) ?>" class="btn btn-sm btn-danger">Eliminar</a>
+                                <a href="<?= base_url('eliminarItemCarrito/'.$item['id']) ?>" class="btn btn-sm btn-danger">Eliminar</a>
                             </td>
                         </tr>
                         <?php $total += $item['subtotal']; ?>
@@ -50,7 +50,7 @@
             </table>
         </div>
 
-        <?= form_open('ventas') ?>
+        <?= form_open('comprarCarrito') ?>
         <div class="row">
             <div class="col-md-6 mb-2">
                 <label for="documento">Documento:</label>

@@ -11,6 +11,7 @@ class CarritoController extends BaseController
     protected $carritoService;
     protected $productoService;
     protected $medioPagoService;
+    protected $ventaService;
 
     public function __construct()
     {
@@ -20,6 +21,7 @@ class CarritoController extends BaseController
         $this->carritoService = $container->get(\App\Services\CarritoService::class);
         $this->productoService = $container->get(\App\Services\ProductoService::class);
         $this->medioPagoService = $container->get(\App\Services\MedioPagoService::class);
+        $this->ventaService = $container->get(\App\Services\VentaService::class);
     }
 
     // Mostrar carrito
@@ -29,10 +31,12 @@ class CarritoController extends BaseController
         $data['medio_pago'] = $this->medioPagoService->obtenerMetodosPago();
         $data['carrito'] = $this->carritoService->obtenerItems();
 
-        return $this->render('front/carrito', $data);
+        return view('front/header', $data)
+             . view('front/carrito', $data)
+             . view('front/footer', $data);
     }
 
-    // Comprar carrito (moved from VentaController). Valida y delega el registro a VentaController->registrarVenta
+    // Comprar carrito
     public function comprarCarrito()
     {
         // Obtener los items del carrito
@@ -50,7 +54,6 @@ class CarritoController extends BaseController
                              ->with('mensaje', 'Debe seleccionar un medio de pago.');
         }
 
-        // Validar stock usando el método que ahora está en CarritoService
         try {
             $this->carritoService->validarStock($itemsCarrito);
         } catch (ValidationException $ve) {
@@ -63,11 +66,13 @@ class CarritoController extends BaseController
                              ->with('mensaje', $ex->getMessage());
         }
 
-        // Delegar el registro a VentaController::registrarVenta
+        // Obtener id usuario y pasar todo a VentaController::registrarVenta
         try {
             $idUsuario = session('id_usuario');
+            if (empty($idUsuario)) {
+                return redirect()->to('login')->with('mensaje', 'Debe iniciar sesión para comprar.');
+            }
 
-            // Crear instancia del controlador de ventas y delegar
             $ventaController = new \App\Controllers\VentaController();
             $resultado = $ventaController->registrarVenta($itemsCarrito, $idUsuario, $medioPago);
 

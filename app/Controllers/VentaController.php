@@ -17,16 +17,13 @@ class VentaController extends BaseController
         $this->ventaService  = $container->get(\App\Services\VentaService::class);
     }
  
-    public function registrarVenta($itemsCarrito)
+   
+    public function registrarVenta($itemsCarrito, $clienteId, $medioPagoId)
     {
-        // Obtener usuario desde sesión
-        $clienteId = session('id_usuario');
         if (empty($clienteId)) {
             throw new \Exception('Usuario no autenticado.');
         }
 
-        // Obtener medio de pago desde el request actual
-        $medioPagoId = $this->request->getPost('medio_pago');
         if (empty($medioPagoId)) {
             throw new \Exception('Debe seleccionar un medio de pago.');
         }
@@ -35,7 +32,7 @@ class VentaController extends BaseController
         $db->transStart();
 
         try {
-            
+            // Validaciones y orquestación delegando pasos atómicos al servicio
             $this->ventaService->validarStock($itemsCarrito);
 
             $ventaId = $this->ventaService->crearVenta($clienteId, $medioPagoId);
@@ -69,7 +66,9 @@ class VentaController extends BaseController
         $data['venta'] = $service->obtenerVentas($desde, $hasta);
         $data['titulo'] = 'Ventas';
 
-        return $this->render('backend/verVentas', $data, 'front_admin');
+        return view('front/header_admin', $data)
+             . view('backend/verVentas', $data)
+             . view('front/footer_admin', $data);
     }
 
     // Ver detalle de venta
@@ -83,6 +82,8 @@ class VentaController extends BaseController
         $data['detalle'] = $detalleVenta['detalle'];
         $data['titulo'] = 'Detalle de Venta';
 
-        return $this->render('backend/verDetalle', $data, 'front_admin');
+        return view('front/header_admin', $data)
+             . view('backend/verDetalle', $data)
+             . view('front/footer_admin', $data);
     }
 }

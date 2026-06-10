@@ -58,9 +58,11 @@ $routes->get('mostrarCarrito', 'CarritoController::mostrarCarrito'); //cambiado 
 $routes->post('agregarAlCarrito', 'CarritoController::agregarAlCarrito'); //cambiado
 $routes->get('eliminarItemCarrito/(:num)', 'CarritoController::eliminarItemCarrito/$1'); //cambiado
 $routes->get('vaciarCarrito', 'CarritoController::vaciarCarrito'); //cambiado
+$routes->post('comprarCarrito', 'CarritoController::comprarCarrito'); // actualizado
 
 /* --- VENTAS --- */
-$routes->post('comprarCarrito', 'VentaController::comprarCarrito'); //cambiado
+
+
 $routes->get('ventas', 'VentaController::mostrarVentas', ['filter' => 'roladmin']); //cambiado
 $routes->get('mostrarVentas', 'VentaController::mostrarVentas', ['filter' => 'roladmin']); //cambiado (compatibilidad)
 $routes->get('detalleVenta/(:num)', 'VentaController::mostrarDetalle/$1'); //cambiado
