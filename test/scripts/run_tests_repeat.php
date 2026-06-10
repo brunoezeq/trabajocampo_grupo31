@@ -1,6 +1,6 @@
 <?php
 // Script para ejecutar tests seleccionados varias veces y registrar resultados en una tabla Markdown.
-// Ejecuta exactamente 20 iteraciones y escribe la salida completa en el archivo results.md.
+// Ejecuta exactamente 20 iteraciones y escribe SOLO las filas relevantes en results.md (sin la salida completa).
 //
 # Uso: php run_tests_repeat.php
 # Nota: Las iteraciones están fijadas en 20 por diseño.
@@ -74,22 +74,16 @@ for ($i = 1; $i <= $iterations; $i++) {
     foreach ($tests as $t) {
         $filter = $t['filter'];
 
-        // Ejecutar phpunit con --filter y capturar salida completa
+        // Ejecutar phpunit con --filter y capturar salida completa (pero NO la guardaremos en results.md)
         $cmd = sprintf('%s --colors=never --filter %s 2>&1', $phpunitCmd, escapeshellarg($filter));
         $start = microtime(true);
         exec($cmd, $outputLines, $exitCode);
         $duration = round((microtime(true) - $start) * 1000); // ms
 
-        // Unir la salida en una sola cadena
-        $output = implode(PHP_EOL, $outputLines);
-        if ($output === '') {
-            $output = "(sin salida)";
-        }
-
         // Determinar resultado simple
         $result = $exitCode === 0 ? 'OK' : 'FAIL';
 
-        // Línea de tabla
+        // Línea de tabla (solo las columnas requeridas)
         $line = sprintf("| %d | %s | %s | %s | %s | %s |\n",
             $i,
             $filter,
@@ -99,12 +93,6 @@ for ($i = 1; $i <= $iterations; $i++) {
             $result
         );
         file_put_contents($resultsPath, $line, FILE_APPEND);
-
-        // Añadir bloque con la salida completa (SIN <details>, solo texto)
-        $detailHeader = sprintf("\n**Salida completa (%s) - %d ms**\n\n", $filter, $duration);
-        $detailBody = "```text\n" . $output . "\n```\n\n";
-
-        file_put_contents($resultsPath, $detailHeader . $detailBody, FILE_APPEND);
 
         // Limpiar salida para la siguiente ejecución
         $outputLines = [];
