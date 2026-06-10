@@ -1,5 +1,6 @@
-php app\Services\ValidationException.php
-<?php namespace App\Services;
+<?php
+
+namespace App\Services;
 
 class ValidationException extends \Exception
 {
