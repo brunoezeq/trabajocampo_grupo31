@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Services;
+namespace App\Services\Strategy;
 
 class DescuentoTarjetaCredito implements DescuentoStrategyInterface
 {

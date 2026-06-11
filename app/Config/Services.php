@@ -19,14 +19,118 @@ use CodeIgniter\Config\BaseService;
  */
 class Services extends BaseService
 {
-    /*
-     * public static function example($getShared = true)
-     * {
-     *     if ($getShared) {
-     *         return static::getSharedInstance('example');
-     *     }
-     *
-     *     return new \CodeIgniter\Example();
-     * }
+    /**
+     * Servicio dinámico que actúa como fábrica para instanciar la estrategia
+     * de descuento adecuada basada en el ID de medio de pago.
      */
+    public static function descuento($medioPagoId = null, $getShared = false)
+    {
+        if ($getShared) {
+            return static::getSharedInstance('descuento', $medioPagoId);
+        }
+
+        $config = config('Descuentos');
+        $strategyClass = $config->strategies[$medioPagoId] ?? $config->defaultStrategy;
+
+        return new $strategyClass();
+    }
+
+    /**
+     * Adaptador del carrito de CodeIgniter
+     */
+    public static function cartAdapter($getShared = true)
+    {
+        if ($getShared) {
+            return static::getSharedInstance('cartAdapter');
+        }
+        return new \App\Adapters\CodeIgniterCartAdapter();
+    }
+
+    /**
+     * Servicio de Carrito de Compras (no compartido por defecto para evitar estados de instancia duplicados)
+     */
+    public static function carritoService($getShared = false)
+    {
+        if ($getShared) {
+            return static::getSharedInstance('carritoService');
+        }
+        return new \App\Services\CarritoService(static::cartAdapter());
+    }
+
+    /**
+     * Servicio de Productos
+     */
+    public static function productoService($getShared = true)
+    {
+        if ($getShared) {
+            return static::getSharedInstance('productoService');
+        }
+        return new \App\Services\ProductoService();
+    }
+
+    /**
+     * Servicio de Ventas
+     */
+    public static function ventaService($getShared = true)
+    {
+        if ($getShared) {
+            return static::getSharedInstance('ventaService');
+        }
+        return new \App\Services\VentaService();
+    }
+
+    /**
+     * Servicio de Categorías
+     */
+    public static function categoriaService($getShared = true)
+    {
+        if ($getShared) {
+            return static::getSharedInstance('categoriaService');
+        }
+        return new \App\Services\CategoriaService();
+    }
+
+    /**
+     * Servicio de Medios de Pago
+     */
+    public static function medioPagoService($getShared = true)
+    {
+        if ($getShared) {
+            return static::getSharedInstance('medioPagoService');
+        }
+        return new \App\Services\MedioPagoService();
+    }
+
+    /**
+     * Servicio de Domicilios
+     */
+    public static function domicilioService($getShared = true)
+    {
+        if ($getShared) {
+            return static::getSharedInstance('domicilioService');
+        }
+        return new \App\Services\DomicilioService();
+    }
+
+    /**
+     * Servicio de Ubicaciones
+     */
+    public static function ubicacionService($getShared = true)
+    {
+        if ($getShared) {
+            return static::getSharedInstance('ubicacionService');
+        }
+        return new \App\Services\UbicacionService();
+    }
+
+    /**
+     * Servicio de Usuarios
+     */
+    public static function usuarioService($getShared = true)
+    {
+        if ($getShared) {
+            return static::getSharedInstance('usuarioService');
+        }
+        return new \App\Services\UsuarioService();
+    }
 }

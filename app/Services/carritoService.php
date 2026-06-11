@@ -3,7 +3,6 @@
 namespace App\Services;
 
 use App\Services\ValidationException;
-use App\Services\ServiceContainer;
 use App\Services\ProductoService;
 use App\Interfaces\CarritoInterface;
 
@@ -54,7 +53,7 @@ class CarritoService
     public function validarStock($cartItems)
     {
         /** @var ProductoService $productoService */
-        $productoService = ServiceContainer::getInstancia()->get(ProductoService::class);
+        $productoService = \Config\Services::productoService();
 
         $errores = [];
 

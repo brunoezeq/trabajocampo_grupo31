@@ -2,7 +2,6 @@
 
 namespace App\Controllers;
 
-use App\Services\ServiceContainer;
 use App\Services\ValidationException;
 
 class VentaController extends BaseController
@@ -12,9 +11,8 @@ class VentaController extends BaseController
 
     public function __construct()
     {
-        $container = ServiceContainer::getInstancia();
-        $this->carritoService = $container->get(\App\Services\CarritoService::class);
-        $this->ventaService  = $container->get(\App\Services\VentaService::class);
+        $this->carritoService = \Config\Services::carritoService();
+        $this->ventaService   = \Config\Services::ventaService();
     }
  
    

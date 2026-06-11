@@ -3,7 +3,6 @@
 namespace App\Controllers;
 
 use App\Models\producto_model;
-use App\Services\ServiceContainer;
 use App\Services\ValidationException;
 
 class CarritoController extends BaseController
@@ -15,13 +14,11 @@ class CarritoController extends BaseController
 
     public function __construct()
     {
-        $container = ServiceContainer::getInstancia();
-
-        // Obtener instancias singletons desde el contenedor
-        $this->carritoService = $container->get(\App\Services\CarritoService::class);
-        $this->productoService = $container->get(\App\Services\ProductoService::class);
-        $this->medioPagoService = $container->get(\App\Services\MedioPagoService::class);
-        $this->ventaService = $container->get(\App\Services\VentaService::class);
+        // Obtener instancias desde el contenedor nativo de CodeIgniter 4
+        $this->carritoService   = \Config\Services::carritoService();
+        $this->productoService  = \Config\Services::productoService();
+        $this->medioPagoService = \Config\Services::medioPagoService();
+        $this->ventaService     = \Config\Services::ventaService();
     }
 
     // Mostrar carrito

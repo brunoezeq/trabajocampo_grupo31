@@ -4,7 +4,6 @@ namespace App\Services;
 
 use App\Models\venta_model;
 use App\Models\detalle_venta_model;
-use App\Services\ServiceContainer;
 use App\Services\ProductoService;
 use App\Services\ValidationException;
 
@@ -47,7 +46,7 @@ class VentaService
      */
     public function validarStock($cartItems)
     {
-        $productoService = ServiceContainer::getInstancia()->get(ProductoService::class);
+        $productoService = \Config\Services::productoService();
 
         $errores = [];
 
@@ -102,7 +101,7 @@ class VentaService
         $detalleModel = new \App\Models\detalle_venta_model();
 
         // Obtener la estrategia de descuento según el medio de pago
-        $strategy = DescuentoFactory::crearPorMedioPagoId($medioPagoId);
+        $strategy = \Config\Services::descuento($medioPagoId);
 
         foreach ($itemsCarrito as $item) {
             $precioUnitario = floatval($item['price']);
@@ -128,8 +127,7 @@ class VentaService
 
     public function actualizarStock($itemsCarrito)
     {
-        $productoService = ServiceContainer::getInstancia()
-        ->get(ProductoService::class);
+        $productoService = \Config\Services::productoService();
 
         foreach ($itemsCarrito as $item) {
 

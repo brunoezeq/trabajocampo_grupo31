@@ -5,8 +5,6 @@ namespace App\Services;
 use App\Models\Usuario_model;
 use App\Services\DomicilioService;
 use App\Services\UbicacionService;
-use App\Services\ServiceContainer;
-
 class UsuarioService
 {
     protected $usuarioModel;
@@ -15,12 +13,9 @@ class UsuarioService
 
     public function __construct()
     {
-        $this->usuarioModel = new Usuario_model();
-
-        // Obtener instancias desde el ServiceContainer (singletons)
-        $container = ServiceContainer::getInstancia();
-        $this->domicilioService = $container->get(DomicilioService::class);
-        $this->ubicacionService = $container->get(UbicacionService::class);
+        $this->usuarioModel     = new Usuario_model();
+        $this->domicilioService = \Config\Services::domicilioService();
+        $this->ubicacionService = \Config\Services::ubicacionService();
     }
 
     public function validarDatosRegistro(array $data): array
