@@ -6,7 +6,7 @@ use CodeIgniter\Model;
 class detalle_venta_model extends Model
 {
     protected $table      = 'detalle_venta';
-    protected $primaryKey = 'id_detalle_venta';
+    protected $primaryKey = 'id_venta';
 
     protected $useAutoIncrement = true;
 
@@ -14,7 +14,7 @@ class detalle_venta_model extends Model
     protected $useSoftDeletes = false;
 
 
-    protected $allowedFields = ['id_detalle_venta', 'venta_id', 'producto_id', 'detalle_cantidad', 'detalle_precio'];
+    protected $allowedFields = ['id_venta', 'venta_id', 'producto_id', 'detalle_cantidad', 'detalle_precio'];
 
     protected bool $allowEmptyInserts = false;
     protected bool $updateOnlyChanged = true;

@@ -130,15 +130,10 @@ class VentaService
         $productoService = \Config\Services::productoService();
 
         foreach ($itemsCarrito as $item) {
-
-        $productoService->descontarStock(
-            $item['id'],
-            $item['qty']
-        );
-    }
-
-        if (!empty($errores)) {
-            throw new ValidationException($errores);
+            $productoService->descontarStock(
+                $item['id'],
+                $item['qty']
+            );
         }
 
         return true;
@@ -171,8 +166,11 @@ class VentaService
         $detalleModel = new \App\Models\detalle_venta_model();
 
         $venta = $ventaModel
-            ->select('venta.*, usuario.nombre_usuario, usuario.apellido_usuario')
+            ->select('venta.*, usuario.nombre_usuario, usuario.apellido_usuario, usuario.dni AS dni_cliente, usuario.celular AS celular_cliente, CONCAT(domicilio.calle, \' \', domicilio.numero, \', \', localidad.nombre_localidad, \' (\', provincia.nombre_provincia, \')\') AS domicilio_cliente')
             ->join('usuario', 'usuario.id_usuario = venta.cliente_id')
+            ->join('domicilio', 'domicilio.id_domicilio = usuario.domicilio_id', 'left')
+            ->join('localidad', 'localidad.id_localidad = domicilio.localidad_id', 'left')
+            ->join('provincia', 'provincia.id_provincia = localidad.provincia_id', 'left')
             ->where('id_venta', $idVenta)
             ->first();
 

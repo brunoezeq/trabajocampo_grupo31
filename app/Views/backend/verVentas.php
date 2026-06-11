@@ -34,7 +34,7 @@
                                 <td><?= $row['id_venta'] ?></td>
                                 <td><?= $row['nombre_usuario'] . ' ' . $row['apellido_usuario'] ?></td>
                                 <td><?= $row['fecha_venta'] ?></td>
-                                <td><a href="<?= site_url('verDetalle/' . $row['id_venta']) ?>" class="btn btn-verde align-center">Ver detalle </a></td>
+                                <td><a href="<?= site_url('detalleVenta/' . $row['id_venta']) ?>" class="btn btn-verde align-center">Ver detalle </a></td>
                             </tr>
                         <?php endforeach; ?>
                     <?php else : ?>

@@ -126,4 +126,13 @@ public function validarDatos($datos, $imagen = null) {
         ->findAll();
     }
 
+    public function descontarStock($idProducto, $cantidad)
+    {
+        $db = \Config\Database::connect();
+        return $db->query(
+            "CALL sp_actualizar_stock(?, ?)",
+            [$idProducto, $cantidad]
+        );
+    }
+
 }
