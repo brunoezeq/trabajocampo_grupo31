@@ -101,13 +101,13 @@ class VentaService
         $detalleModel = new \App\Models\detalle_venta_model();
 
         // Obtener la estrategia de descuento según el medio de pago
-        $strategy = \Config\Services::descuento($medioPagoId);
+        $strategy = \App\Services\Strategy\StrategyPagoFactory::crearPorMedioPagoId($medioPagoId);
 
         foreach ($itemsCarrito as $item) {
             $precioUnitario = floatval($item['price']);
 
             // Aplicar descuento mediante la estrategia
-            $precioConDescuento = $strategy->aplicarDescuento($precioUnitario);
+            $precioConDescuento = $strategy->getPrecioFinal($precioUnitario);
 
             $detallePayload = [
                 'venta_id'         => $ventaId,

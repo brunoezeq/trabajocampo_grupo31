@@ -19,32 +19,6 @@ use CodeIgniter\Config\BaseService;
  */
 class Services extends BaseService
 {
-    /**
-     * Servicio dinámico que actúa como fábrica para instanciar la estrategia
-     * de descuento adecuada basada en el ID de medio de pago.
-     */
-    public static function descuento($medioPagoId = null, $getShared = false)
-    {
-        if ($getShared) {
-            return static::getSharedInstance('descuento', $medioPagoId);
-        }
-
-        $config = config('Descuentos');
-        $strategyClass = $config->strategies[$medioPagoId] ?? $config->defaultStrategy;
-
-        return new $strategyClass();
-    }
-
-    /**
-     * Adaptador del carrito de CodeIgniter
-     */
-    public static function cartAdapter($getShared = true)
-    {
-        if ($getShared) {
-            return static::getSharedInstance('cartAdapter');
-        }
-        return new \App\Adapters\CodeIgniterCartAdapter();
-    }
 
     /**
      * Servicio de Carrito de Compras (no compartido por defecto para evitar estados de instancia duplicados)
@@ -54,7 +28,7 @@ class Services extends BaseService
         if ($getShared) {
             return static::getSharedInstance('carritoService');
         }
-        return new \App\Services\CarritoService(static::cartAdapter());
+        return new \App\Services\CarritoService(new \App\Adapters\CodeIgniterCartAdapter());
     }
 
     /**
