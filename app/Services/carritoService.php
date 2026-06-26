@@ -31,12 +31,12 @@ class CarritoService
     }
 
     // Verifica stock
-    public function verificarStock($producto)
+    public function verificarStock($idUsuario, $producto)
     {
         $cantidadEnCarrito = 0;
 
         // Usamos el adaptador
-        foreach ($this->cartAdapter->obtenerContenido() as $item) {
+        foreach ($this->cartAdapter->obtenerContenido($idUsuario) as $item) {
             if ($item['id'] == $producto['id_producto']) {
                 $cantidadEnCarrito += $item['qty'];
             }
@@ -86,32 +86,33 @@ class CarritoService
     }
 
     // Agrega el producto al carrito
-    public function agregarProducto($producto)
+    public function agregarProducto($idUsuario, $producto, $cantidad = 1)
     {
         // Usamos el adaptador
         $this->cartAdapter->agregar(
+            $idUsuario,
             $producto['id_producto'],
             $producto['nombre_producto'],
             $producto['precio_producto'],
-            1
+            $cantidad
         );
     }
 
     // Eliminar producto del carrito por su ID de producto
-    public function eliminarPorId($id_producto)
+    public function eliminarPorId($idUsuario, $id_producto)
     {
-        return $this->cartAdapter->eliminar($id_producto);
+        return $this->cartAdapter->eliminar($idUsuario, $id_producto);
     }
 
     // Vaciar carrito y todos sus items
-    public function destruirCarrito()
+    public function destruirCarrito($idUsuario)
     {
-        $this->cartAdapter->vaciar();
+        $this->cartAdapter->vaciar($idUsuario);
     }
 
     // Obtener todos los items cargados en el carrito
-    public function obtenerItems()
+    public function obtenerItems($idUsuario)
     {
-        return $this->cartAdapter->obtenerContenido();
+        return $this->cartAdapter->obtenerContenido($idUsuario);
     }
 }

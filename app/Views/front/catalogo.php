@@ -66,7 +66,11 @@
                       <?= form_hidden('id', $producto1['id_producto']) ?>
                       <?= form_hidden('nombre', $producto1['nombre_producto']) ?>
                       <?= form_hidden('precio', $producto1['precio_producto']) ?>
-                      <?= form_submit('comprar', 'Agregar al carrito', "class='btn btn-verde mt-2'") ?>
+                      <div class="d-flex justify-content-center align-items-center mt-2 mb-2">
+                        <label for="cantidad_<?= $producto1['id_producto'] ?>" class="me-2 mb-0">Cantidad:</label>
+                        <input type="number" id="cantidad_<?= $producto1['id_producto'] ?>" name="cantidad" value="1" min="1" max="<?= esc($producto1['stock_producto']) ?>" class="form-control text-center" style="width: 70px;">
+                      </div>
+                      <?= form_submit('comprar', 'Agregar al carrito', "class='btn btn-verde'") ?>
                     <?= form_close() ?>
                   <?php endif; ?>
                 </div>

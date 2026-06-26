@@ -8,16 +8,16 @@ class CategoriaService {
     }
 
  
-    public function validar($datos) {
+    public function validar($nombreCategoria, $descripcionCategoria) {
         $errores = [];
 
-        if (empty($datos['nombre_categoria'])) {
+        if (empty($nombreCategoria)) {
             $errores['nombre_categoria'] = 'El nombre de la categoría es obligatorio.';
-        } elseif (strlen($datos['nombre_categoria']) < 3) {
+        } elseif (strlen($nombreCategoria) < 3) {
             $errores['nombre_categoria'] = 'El nombre debe tener al menos 3 caracteres.';
         }
 
-        if (empty($datos['descripcion_categoria'])) {
+        if (empty($descripcionCategoria)) {
             $errores['descripcion_categoria'] = 'La descripción es obligatoria.';
         }
 
@@ -33,12 +33,18 @@ class CategoriaService {
         return $this->model->find($id);
     }
 
-    public function insertar($datos) {
-        return $this->model->insert($datos);
+    public function insertar($nombreCategoria, $descripcionCategoria) {
+        return $this->model->insert([
+            'nombre_categoria'      => $nombreCategoria,
+            'descripcion_categoria' => $descripcionCategoria,
+        ]);
     }
 
-    public function actualizar($id, $datos) {
-        return $this->model->update($id, $datos);
+    public function actualizar($id, $nombreCategoria, $descripcionCategoria) {
+        return $this->model->update($id, [
+            'nombre_categoria'      => $nombreCategoria,
+            'descripcion_categoria' => $descripcionCategoria,
+        ]);
     }
 
     public function eliminar($id) {

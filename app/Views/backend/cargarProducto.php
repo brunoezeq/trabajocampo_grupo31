@@ -24,7 +24,7 @@
                         </div>
                     <?php endif ?>
 
-                    <?= form_open_multipart('registrarProducto') ?> 
+                    <?= form_open_multipart('procesarFormularioAgregar') ?> 
 
                     <div class="mb-3">
                         <label for="nombre" class="form-label text-black">Nombre del Producto</label>

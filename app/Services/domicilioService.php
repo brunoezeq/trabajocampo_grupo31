@@ -17,36 +17,36 @@ class DomicilioService
     * Retorna un mensaje de error si hay algún problema, o null si todo es correcto
     */
 
-     public function validarDatosDomicilio(array $data): array
+     public function validarDatosDomicilio($calle, $numero, $codigoPostal, $localidadId, $piso = null, $departamento = null): array
     {
     $erroresDom = [];
 
     // Obligatorios
-    if (empty($data['calle']) || empty($data['numero']) || empty($data['codigo_postal']) || empty($data['localidad_id'])) {
+    if (empty($calle) || empty($numero) || empty($codigoPostal) || empty($localidadId)) {
         $erroresDom[] = 'Calle, número, código postal y localidad son campos obligatorios';
     }
 
     // Validación de Calle
-    if (!empty($data['calle']) && strlen($data['calle']) > 100) {
+    if (!empty($calle) && strlen($calle) > 100) {
         $erroresDom[] = 'El nombre de la calle es demasiado largo';
     }
 
     // Validación de Número de casa
-    if (!empty($data['numero']) && (!is_numeric($data['numero']) || $data['numero'] <= 0 || $data['numero'] > 99999)) {
+    if (!empty($numero) && (!is_numeric($numero) || $numero <= 0 || $numero > 99999)) {
         $erroresDom[] = 'El número de domicilio debe ser un número positivo válido (máx. 5 dígitos)';
     }
 
     // Validación de Código Postal
-    if (!empty($data['codigo_postal']) && (!is_numeric($data['codigo_postal']) || strlen($data['codigo_postal']) < 4 || strlen($data['codigo_postal']) > 8)) {
+    if (!empty($codigoPostal) && (!is_numeric($codigoPostal) || strlen($codigoPostal) < 4 || strlen($codigoPostal) > 8)) {
         $erroresDom[] = 'El código postal debe tener entre 4 y 8 caracteres numéricos';
     }
 
     // Validaciones opcionales (Piso y Departamento)
-    if (!empty($data['piso']) && strlen($data['piso']) > 10) {
+    if (!empty($piso) && strlen($piso) > 10) {
         $erroresDom[] = 'El campo piso es demasiado largo';
     }
 
-    if (!empty($data['departamento']) && strlen($data['departamento']) > 10) {
+    if (!empty($departamento) && strlen($departamento) > 10) {
         $erroresDom[] = 'El campo departamento es demasiado largo';
     }
 
@@ -56,15 +56,15 @@ class DomicilioService
     /**
      * Guarda un nuevo domicilio y retorna el ID generado.
      */
-    public function guardar(array $data): int
+    public function guardar($calle, $numero, $codigoPostal, $localidadId, $piso = null, $departamento = null): int
     {
         $this->domicilioModel->insert([
-            'calle'         => $data['calle'],
-            'numero'        => $data['numero'],
-            'piso'          => $data['piso'] ?? null,
-            'departamento'  => $data['departamento'] ?? null,
-            'codigo_postal' => $data['codigo_postal'],
-            'localidad_id'  => $data['localidad_id']
+            'calle'         => $calle,
+            'numero'        => $numero,
+            'piso'          => $piso,
+            'departamento'  => $departamento,
+            'codigo_postal' => $codigoPostal,
+            'localidad_id'  => $localidadId,
         ]);
 
         return $this->domicilioModel->getInsertID();

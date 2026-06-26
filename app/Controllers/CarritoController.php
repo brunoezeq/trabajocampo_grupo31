@@ -24,9 +24,11 @@ class CarritoController extends BaseController
     // Mostrar carrito
     public function mostrarCarrito()
     {
+        $idUsuario = session('id_usuario') ?? session_id();
+
         $data['titulo'] = 'Mi Carrito';
         $data['medio_pago'] = $this->medioPagoService->obtenerMetodosPago();
-        $data['carrito'] = $this->carritoService->obtenerItems();
+        $data['carrito'] = $this->carritoService->obtenerItems($idUsuario);
 
         return view('front/header', $data)
              . view('front/carrito', $data)
@@ -36,8 +38,10 @@ class CarritoController extends BaseController
     // Comprar carrito
     public function comprarCarrito()
     {
+        $idUsuario = session('id_usuario') ?? session_id();
+
         // Obtener los items del carrito
-        $itemsCarrito = $this->carritoService->obtenerItems();
+        $itemsCarrito = $this->carritoService->obtenerItems($idUsuario);
 
         // Validaciones
         if (empty($itemsCarrito)) {
@@ -87,7 +91,7 @@ class CarritoController extends BaseController
         }
 
         // Vaciar carrito
-        $this->carritoService->destruirCarrito();
+        $this->carritoService->destruirCarrito($idUsuario);
 
         return redirect()->to('catalogo')
                          ->with('mensaje', 'Compra realizada correctamente.');
@@ -96,7 +100,9 @@ class CarritoController extends BaseController
     // Agregar producto al carrito
     public function agregarAlCarrito()
     {
+        $idUsuario  = session('id_usuario') ?? session_id();
         $idProducto = $this->request->getPost('id');
+        $cantidad   = $this->request->getPost('cantidad') ?? 1;
 
         $producto = $this->productoService->obtenerPorId($idProducto);
 
@@ -108,14 +114,14 @@ class CarritoController extends BaseController
         }
 
         // Verificar stock
-        $errorStock = $this->carritoService->verificarStock($producto);
+        $errorStock = $this->carritoService->verificarStock($idUsuario, $producto);
 
         if ($errorStock) {
             return redirect()->back()->with('mensaje', $errorStock);
         }
 
         // Agregar producto al carrito
-        $this->carritoService->agregarProducto($producto);
+        $this->carritoService->agregarProducto($idUsuario, $producto, $cantidad);
 
         return redirect()->to('verCarrito')
                          ->with('mensaje', 'Producto agregado correctamente.');
@@ -124,7 +130,8 @@ class CarritoController extends BaseController
     // Eliminar producto del carrito por su ID de producto
     public function eliminarItemCarrito($id_producto)
     {
-       $productoEliminado = $this->carritoService->eliminarPorId($id_producto);
+       $idUsuario = session('id_usuario') ?? session_id();
+       $productoEliminado = $this->carritoService->eliminarPorId($idUsuario, $id_producto);
 
        if (!$productoEliminado) {
            return redirect()->to('verCarrito')
@@ -137,7 +144,8 @@ class CarritoController extends BaseController
     // Vaciar carrito
     public function vaciarCarrito()
     {
-        $this->carritoService->destruirCarrito();
+        $idUsuario = session('id_usuario') ?? session_id();
+        $this->carritoService->destruirCarrito($idUsuario);
         return redirect()->to('verCarrito')
                          ->with('mensaje', 'Carrito vaciado correctamente.');
     }

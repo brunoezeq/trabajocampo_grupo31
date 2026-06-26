@@ -45,7 +45,7 @@ $routes->get('usuario/getLocalidadesPorProvincia/(:num)', 'UsuarioController::ge
 /* --- PRODUCTOS --- */
 $routes->get('catalogo', 'ProductoController::mostrarCatalogo'); //muestra vista catálogo
 $routes->get('cargarProducto', 'ProductoController::mostrarFormularioCarga', ['filter' => 'roladmin']); // muestra vista cargar producto
-$routes->post('registrarProducto', 'ProductoController::registrarProducto', ['filter' => 'roladmin']); // procesa datos del formulario de carga de producto
+$routes->post('procesarFormularioAgregar', 'ProductoController::procesarFormularioAgregar', ['filter' => 'roladmin']); // procesa datos del formulario de carga de producto
 $routes->get('gestionarProductos', 'ProductoController::gestionarProductos', ['filter' => 'roladmin']); //muestra vista gestionar producto
 $routes->get('editarProducto/(:num)', 'ProductoController::mostrarFormularioEditar/$1', ['filter' => 'roladmin']);
 $routes->post('editarProducto/(:num)', 'ProductoController::editarProducto/$1', ['filter' => 'roladmin']);

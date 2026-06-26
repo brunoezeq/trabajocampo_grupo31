@@ -32,15 +32,19 @@ public function initController(\CodeIgniter\HTTP\RequestInterface $request, \Cod
          . view('front/footer_admin');
 }
 
-public function registrarProducto() {
+public function procesarFormularioAgregar() {
     $request = \Config\Services::request();
     //Recupera datos del formulario
-    $datos = $request->getPost();
+    $nombre      = $request->getPost('nombre');
+    $descripcion = $request->getPost('descripcion');
+    $precio      = $request->getPost('precio');
+    $stock       = $request->getPost('stock');
+    $categoria   = $request->getPost('categoria');
     $imagen = $request->getFile('imagen');
 
     //Llamada al servicio para validar los datos del producto
     try {
-        $this->productoService->validarDatos($datos, $imagen);
+        $this->productoService->validarDatos($nombre, $descripcion, $precio, $stock, $imagen);
     } catch (ValidationException $ve) {
         // Mostrar errores de validación (array)
         return redirect()->back()->withInput()->with('errores', $ve->getErrors());
@@ -50,7 +54,7 @@ public function registrarProducto() {
     }
 
     //Si no hay errores de validación, se llama al servicio para insertar el producto
-    $this->productoService->insertar($datos, $imagen);
+    $this->productoService->insertar($nombre, $descripcion, $precio, $stock, $categoria, $imagen);
     
     //Muestra un mensaje de éxito
      return redirect()->back()->with('mensaje', 'Guardado con éxito');
@@ -73,12 +77,16 @@ public function registrarProducto() {
 public function editarProducto($id = null) {
         $request = \Config\Services::request();
         //Recupera datos del formulario
-        $datos = $request->getPost();
+        $nombre      = $request->getPost('nombre');
+        $descripcion = $request->getPost('descripcion');
+        $precio      = $request->getPost('precio');
+        $stock       = $request->getPost('stock');
+        $categoria   = $request->getPost('categoria');
         $imagen = $request->getFile('imagen');
 
         //Llamada al servicio para validar los datos del producto
     try {
-        $this->productoService->validarDatos($datos, $imagen);
+        $this->productoService->validarDatos($nombre, $descripcion, $precio, $stock, $imagen);
     } catch (ValidationException $ve) {
         return redirect()->back()->withInput()->with('errores', $ve->getErrors());
     } catch (\Exception $ex) {
@@ -86,7 +94,7 @@ public function editarProducto($id = null) {
     }
 
      //Si no hay errores de validación, se llama al servicio para actualizar el producto
-    $this->productoService->actualizar($id, $datos, $imagen);
+    $this->productoService->actualizar($id, $nombre, $descripcion, $precio, $stock, $categoria, $imagen);
 
     //Si el producto se editó correctamente, se muestra un mensaje de éxito
      return redirect()->back()->with('mensaje', 'Producto editado con éxito');

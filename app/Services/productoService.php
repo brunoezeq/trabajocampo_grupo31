@@ -10,14 +10,14 @@ class ProductoService {
         
     }
 
-    public function insertar($datos, $imagen) {
+    public function insertar($nombre, $descripcion, $precio, $stock, $categoria, $imagen) {
 
         $datosProducto = [
-        'nombre_producto'      => $datos['nombre'],
-        'descripcion_producto' => $datos['descripcion'],
-        'precio_producto'      => $datos['precio'],
-        'stock_producto'       => $datos['stock'],
-        'categoria_producto'   => $datos['categoria'],
+        'nombre_producto'      => $nombre,
+        'descripcion_producto' => $descripcion,
+        'precio_producto'      => $precio,
+        'stock_producto'       => $stock,
+        'categoria_producto'   => $categoria,
         'estado_producto'      => 1
     ];
         if ($imagen && $imagen->isValid()) {
@@ -32,13 +32,13 @@ class ProductoService {
         return $this->model->find($id);
     }
 
-    public function actualizar($id, $datos, $imagen = null) {
+    public function actualizar($id, $nombre, $descripcion, $precio, $stock, $categoria, $imagen = null) {
         $datosProducto = [
-        'nombre_producto'      => $datos['nombre'],
-        'descripcion_producto' => $datos['descripcion'],
-        'precio_producto'      => $datos['precio'],
-        'stock_producto'       => $datos['stock'],
-        'categoria_producto'   => $datos['categoria'],
+        'nombre_producto'      => $nombre,
+        'descripcion_producto' => $descripcion,
+        'precio_producto'      => $precio,
+        'stock_producto'       => $stock,
+        'categoria_producto'   => $categoria,
     ];
 
         if ($imagen && $imagen->isValid()) {
@@ -61,30 +61,30 @@ class ProductoService {
     return false;
 }
 
-public function validarDatos($datos, $imagen = null) {
+public function validarDatos($nombre, $descripcion, $precio, $stock, $imagen = null) {
         $errores = [];
 
         // Validación de Nombre
-        if (empty($datos['nombre'])) {
+        if (empty($nombre)) {
             $errores['nombre'] = 'El nombre es obligatorio';
-        } elseif (strlen($datos['nombre']) < 5 || strlen($datos['nombre']) > 20) {
+        } elseif (strlen($nombre) < 5 || strlen($nombre) > 20) {
             $errores['nombre'] = 'El nombre debe tener entre 5 y 20 caracteres';
         }
 
         // Validación de Descripción
-        if (empty($datos['descripcion'])) {
+        if (empty($descripcion)) {
             $errores['descripcion'] = 'La descripción es obligatoria';
-        } elseif (strlen($datos['descripcion']) < 5) {
+        } elseif (strlen($descripcion) < 5) {
             $errores['descripcion'] = 'La descripción debe tener al menos 5 caracteres';
         }
 
         // Validación de Precio
-        if (!isset($datos['precio']) || !is_numeric($datos['precio'])) {
+        if (!isset($precio) || !is_numeric($precio)) {
             $errores['precio'] = 'El precio debe ser un número';
         }
 
         // Validación de Stock
-        if (!isset($datos['stock']) || !is_numeric($datos['stock'])) {
+        if (!isset($stock) || !is_numeric($stock)) {
             $errores['stock'] = 'El stock debe ser un número';
         }
 

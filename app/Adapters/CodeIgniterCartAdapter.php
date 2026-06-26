@@ -6,17 +6,22 @@ use App\Interfaces\CarritoInterface;
 
 class CodeIgniterCartAdapter implements CarritoInterface
 {
-    protected $cart;
+    protected $carrito;
 
     public function __construct()
     {
         // Inicializa el carrito del framework CodeIgniter
-        $this->cart = \Config\Services::cart();
+        $this->carrito = \Config\Services::cart();
     }
 
-    public function agregar($id, $nombre, $precio, $cantidad)
+    public function agregar($idUsuario, $id, $nombre, $precio, $cantidad)
     {
-        $this->cart->insert([
+        $idSesion = session('id_usuario') ?? session_id();
+        if ($idSesion && $idSesion != $idUsuario) {
+            throw new \Exception("Acceso denegado: El carrito no pertenece al usuario actual.");
+        }
+
+        $this->carrito->insert([
             'id'    => $id,
             'name'  => $nombre,
             'price' => $precio,
@@ -24,28 +29,43 @@ class CodeIgniterCartAdapter implements CarritoInterface
         ]);
     }
 
-    public function eliminar($id)
+    public function eliminar($idUsuario, $id)
     {
+        $idSesion = session('id_usuario') ?? session_id();
+        if ($idSesion && $idSesion != $idUsuario) {
+            throw new \Exception("Acceso denegado: El carrito no pertenece al usuario actual.");
+        }
+
         // Recorre el contenido y elimina el item que coincida por id
-        foreach ($this->obtenerContenido() as $item) {
+        foreach ($this->obtenerContenido($idUsuario) as $item) {
             if ($item['id'] == $id) {
                 // remove espera rowid
-                $this->cart->remove($item['rowid']);
+                $this->carrito->remove($item['rowid']);
                 return true;
             }
         }
         return false;
     }
 
-    public function vaciar()
+    public function vaciar($idUsuario)
     {
-        $this->cart->destroy();
+        $idSesion = session('id_usuario') ?? session_id();
+        if ($idSesion && $idSesion != $idUsuario) {
+            throw new \Exception("Acceso denegado: El carrito no pertenece al usuario actual.");
+        }
+
+        $this->carrito->destroy();
     }
 
-    public function obtenerContenido(): array
+    public function obtenerContenido($idUsuario): array
     {
-        $contents = $this->cart->contents();
-        // Aseguramos que si contents() devuelve null/false, se transforme en un array vacío
+        $idSesion = session('id_usuario') ?? session_id();
+        if ($idSesion && $idSesion != $idUsuario) {
+            throw new \Exception("Acceso denegado: El carrito no pertenece al usuario actual.");
+        }
+
+        $contents = $this->carrito->contents();
+        // Aseguramos que si contents() devuelve null/false, se transforme en un array vacio
         return is_array($contents) ? $contents : [];
     }
 }

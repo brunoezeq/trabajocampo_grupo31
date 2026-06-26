@@ -12,16 +12,19 @@ use App\Models\detalle_venta_model;
 
 use App\Services\UsuarioService;
 use App\Services\UbicacionService;
+use App\Services\DomicilioService;
 
 class UsuarioController extends BaseController  {
         
     protected $usuarioService;
     protected $ubicacionService;
+    protected $domicilioService;
 
     public function __construct()
     {
         $this->usuarioService   = \Config\Services::usuarioService();
         $this->ubicacionService = \Config\Services::ubicacionService();
+        $this->domicilioService = \Config\Services::domicilioService();
     }
 
     public function mostrarRegistro(): string
@@ -36,12 +39,43 @@ class UsuarioController extends BaseController  {
 
     public function registrarUsuario()
         {
-             $datos = $this->request->getPost();
-             $errores = $this->usuarioService->validarDatosRegistro($datos);
+             // Datos de usuario
+             $nombre              = $this->request->getPost('nombre');
+             $apellido            = $this->request->getPost('apellido');
+             $dni                 = $this->request->getPost('dni');
+             $celular             = $this->request->getPost('celular');
+             $usuario             = $this->request->getPost('usuario');
+             $contraseña          = $this->request->getPost('contraseña');
+             $confirmarContraseña = $this->request->getPost('confirmar_contraseña');
+             $localidadId         = $this->request->getPost('localidad_id');
+
+             // Datos de domicilio
+             $calle        = $this->request->getPost('calle');
+             $numero       = $this->request->getPost('numero');
+             $codigoPostal = $this->request->getPost('codigo_postal');
+             $piso         = $this->request->getPost('piso');
+             $departamento = $this->request->getPost('departamento');
+
+             // Validar cada grupo por separado
+             $errores = $this->usuarioService->validarDatosRegistro(
+                 $nombre, $apellido, $dni, $celular, $usuario, $contraseña, $confirmarContraseña, $localidadId
+             );
+             $erroresDom = $this->domicilioService->validarDatosDomicilio(
+                 $calle, $numero, $codigoPostal, $localidadId, $piso, $departamento
+             );
+             $errores = array_merge($errores, $erroresDom);
+
            if ($errores) {
                   return redirect()->back()->withInput()->with('errores', $errores);
                 }
-           $this->usuarioService->crearUsuario($datos);
+
+           // Crear domicilio primero, luego usuario con el ID obtenido
+           $idDomicilio = $this->domicilioService->guardar(
+               $calle, $numero, $codigoPostal, $localidadId, $piso, $departamento
+           );
+           $this->usuarioService->crearUsuario(
+               $nombre, $apellido, $dni, $celular, $usuario, $contraseña, $idDomicilio
+           );
            return redirect()->to('login')->with('mensaje', 'Usuario registrado con éxito');
            }
 
@@ -56,15 +90,17 @@ class UsuarioController extends BaseController  {
 
     public function iniciarSesion()
     {
-             $datos = $this->request->getPost();
-             $errores = $this->usuarioService->validarDatosSesion($datos);
+             $usuario    = $this->request->getPost('usuario');
+             $contraseña = $this->request->getPost('contraseña');
+
+             $errores = $this->usuarioService->validarDatosSesion($usuario, $contraseña);
              if (count($errores) > 0) {
                 return redirect()->back()->withInput()->with('errores', $errores);
              }
-             $this->usuarioService->establecerSesion($datos['usuario']);
+             $this->usuarioService->establecerSesion($usuario);
 
-              $usuario = $this->usuarioService->buscarPorUsername($datos['usuario']);
-             if ($usuario['perfil_id'] == 1) {
+              $usuarioData = $this->usuarioService->buscarPorUsername($usuario);
+             if ($usuarioData['perfil_id'] == 1) {
         return redirect()->to('/user_admin')->with('mensaje', 'Bienvenido administrador');
         }
         return redirect()->to('/')->with('mensaje', 'Bienvenido usuario');

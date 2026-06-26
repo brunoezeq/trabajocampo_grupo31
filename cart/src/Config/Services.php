@@ -29,7 +29,7 @@ class Services extends CoreServices
      * @return mixed
      *
      */
-    public static function cart($getShared = true)
+    public static function cart($getShared = false)
     {
         if ($getShared) {
             return static::getSharedInstance('cart');
